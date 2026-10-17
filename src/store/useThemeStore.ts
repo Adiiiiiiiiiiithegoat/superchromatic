@@ -1,0 +1,238 @@
+import { useMemo } from 'react'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { extractPalette } from '../lib/extract/client'
+import { uid } from '../lib/extract/pixels'
+import { generateTheme } from '../lib/theme/generate'
+import { parseToOklch } from '../lib/theme/oklch'
+import { PRESETS_BY_ID, type PresetId } from '../lib/theme/presets'
+import { resolveRoles } from '../lib/theme/roles'
+import type { ShareState } from '../lib/share/url'
+import { ROLES, type A11yOptions, type Adjustments, type Mode, type Role, type RoleOverrides, type Strategy, type Swatch, type SwatchSource } from '../lib/types'
+
+export interface ImageRef {
+  src: string
+  name: string
+  kind: 'sample' | 'upload'
+}
+
+interface ThemeState {
+  image: ImageRef | null
+  status: 'idle' | 'extracting' | 'error'
+  error: string | null
+  strategy: Strategy
+  k: number
+  swatches: Swatch[]
+  selected: string[]
+  overrides: RoleOverrides
+  presetId: PresetId
+  adjustments: Adjustments
+  mode: Mode
+  a11y: A11yOptions
+  hintDismissed: boolean
+  toast: { id: number; message: string } | null
+
+  loadImage: (blob: Blob, image: ImageRef) => Promise<void>
+  uploadFile: (file: File) => void
+  reextract: () => Promise<void>
+  setStrategy: (s: Strategy) => void
+  setK: (k: number) => void
+  toggleSelected: (id: string) => void
+  setRole: (role: Role, id: string | null) => void
+  clearRoleFor: (id: string) => void
+  shuffleRoles: () => void
+  resetRoles: () => void
+  addColor: (hex: string, source: SwatchSource) => void
+  removeColor: (id: string) => void
+  setPreset: (id: PresetId) => void
+  setAdjustment: (key: keyof Adjustments, value: number) => void
+  setMode: (mode: Mode) => void
+  setAutoFix: (on: boolean) => void
+  applyShare: (s: ShareState) => void
+  dismissHint: () => void
+  notify: (message: string) => void
+}
+
+export const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp']
+export const MAX_BYTES = 15 * 1024 * 1024
+
+// The current image's bytes live outside the store: not serialisable, only needed for re-extraction.
+let currentBlob: Blob | null = null
+let currentObjectUrl: string | null = null
+let latestRequest = 0
+
+/** localStorage that fails silently (private mode, quota, disabled storage). */
+const safeStorage = {
+  getItem: (k: string) => { try { return localStorage.getItem(k) } catch { return null } },
+  setItem: (k: string, v: string) => { try { localStorage.setItem(k, v) } catch { /* ignore */ } },
+  removeItem: (k: string) => { try { localStorage.removeItem(k) } catch { /* ignore */ } },
+}
+
+export const useThemeStore = create<ThemeState>()(
+  persist(
+    (set, get) => ({
+      image: null,
+      status: 'idle',
+      error: null,
+      strategy: 'kmeans',
+      k: 8,
+      swatches: [],
+      selected: [],
+      overrides: {},
+      presetId: 'minimal',
+      adjustments: PRESETS_BY_ID.minimal.defaults,
+      mode: 'light',
+      a11y: { autoFix: true },
+      hintDismissed: false,
+      toast: null,
+
+      async loadImage(blob, image) {
+        currentBlob = blob
+        if (currentObjectUrl && currentObjectUrl !== image.src) URL.revokeObjectURL(currentObjectUrl)
+        currentObjectUrl = image.kind === 'upload' ? image.src : null
+        set({ image })
+        await get().reextract()
+      },
+
+      uploadFile(file) {
+        if (!ACCEPTED_TYPES.includes(file.type)) {
+          set({ status: 'error', error: `“${file.name || 'That file'}” isn’t a PNG, JPG or WebP image. Try another one.` })
+          return
+        }
+        if (file.size > MAX_BYTES) {
+          set({ status: 'error', error: `That image is ${(file.size / 1048576).toFixed(1)} MB. The limit is 15 MB.` })
+          return
+        }
+        void get().loadImage(file, { src: URL.createObjectURL(file), name: file.name || 'Pasted image', kind: 'upload' })
+      },
+
+      async reextract() {
+        const { image, strategy, k } = get()
+        if (!image) return
+        const id = ++latestRequest
+        set({ status: 'extracting', error: null })
+        try {
+          currentBlob ??= await (await fetch(image.src)).blob()
+          const swatches = await extractPalette(currentBlob, strategy, k)
+          if (id !== latestRequest) return // a newer request superseded this one
+          set({ swatches, selected: swatches.map((s) => s.id), overrides: {}, status: 'idle' })
+        } catch (err) {
+          if (id !== latestRequest) return
+          set({ status: 'error', error: err instanceof Error ? err.message : 'Could not read that image.' })
+        }
+      },
+
+      setStrategy(strategy) {
+        set({ strategy })
+        void get().reextract()
+      },
+      setK(k) {
+        set({ k })
+        void get().reextract()
+      },
+
+      toggleSelected(id) {
+        const { selected } = get()
+        set({ selected: selected.includes(id) ? selected.filter((s) => s !== id) : [...selected, id] })
+      },
+
+      setRole(role, id) {
+        const { selected } = get()
+        set({ overrides: { ...get().overrides, [role]: id }, selected: id && !selected.includes(id) ? [...selected, id] : selected })
+      },
+
+      clearRoleFor(id) {
+        const { assignment } = resolveRoles(get().swatches, get().selected, get().overrides)
+        const overrides = { ...get().overrides }
+        for (const role of ROLES) if (assignment[role] === id) overrides[role] = null
+        set({ overrides })
+      },
+
+      shuffleRoles() {
+        const { swatches, selected, overrides } = get()
+        const { assignment } = resolveRoles(swatches, selected, overrides)
+        const ids = ROLES.map((r) => assignment[r])
+        // Fisher–Yates, retried until the order actually changes (when that's possible).
+        let next = ids
+        for (let tries = 0; tries < 8 && next.every((v, i) => v === ids[i]); tries++) {
+          next = [...ids]
+          for (let i = next.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1))
+            ;[next[i], next[j]] = [next[j], next[i]]
+          }
+        }
+        set({ overrides: Object.fromEntries(ROLES.map((r, i) => [r, next[i]])) })
+      },
+
+      resetRoles: () => set({ overrides: {} }),
+
+      addColor(hex, source) {
+        const swatch: Swatch = { id: uid(source), hex, oklch: parseToOklch(hex), population: 0, source }
+        set({ swatches: [...get().swatches, swatch], selected: [...get().selected, swatch.id] })
+      },
+
+      removeColor(id) {
+        const overrides = Object.fromEntries(Object.entries(get().overrides).filter(([, v]) => v !== id))
+        set({ swatches: get().swatches.filter((s) => s.id !== id), selected: get().selected.filter((s) => s !== id), overrides })
+      },
+
+      setPreset(id) {
+        const preset = PRESETS_BY_ID[id]
+        set({ presetId: id, adjustments: preset.defaults, mode: preset.preferredMode ?? get().mode })
+      },
+
+      setAdjustment: (key, value) => set({ adjustments: { ...get().adjustments, [key]: value } }),
+      setMode: (mode) => set({ mode }),
+      setAutoFix: (autoFix) => set({ a11y: { autoFix } }),
+
+      applyShare(s) {
+        currentBlob = null
+        set({ ...s, image: null, status: 'idle', error: null })
+      },
+
+      dismissHint: () => set({ hintDismissed: true }),
+      notify: (message) => set({ toast: { id: Date.now(), message } }),
+    }),
+    {
+      name: 'superchromatic:v1',
+      storage: createJSONStorage(() => safeStorage),
+      // Uploaded images are blob: URLs that die with the tab, so only sample images are remembered.
+      partialize: (s) => ({
+        image: s.image?.kind === 'sample' ? s.image : null,
+        strategy: s.strategy,
+        k: s.k,
+        swatches: s.swatches,
+        selected: s.selected,
+        overrides: s.overrides,
+        presetId: s.presetId,
+        adjustments: s.adjustments,
+        mode: s.mode,
+        a11y: s.a11y,
+        hintDismissed: s.hintDismissed,
+      }),
+    },
+  ),
+)
+
+export function useRoles() {
+  const swatches = useThemeStore((s) => s.swatches)
+  const selected = useThemeStore((s) => s.selected)
+  const overrides = useThemeStore((s) => s.overrides)
+  return useMemo(() => resolveRoles(swatches, selected, overrides), [swatches, selected, overrides])
+}
+
+/** The live theme: roles → generateTheme → CSS variables. */
+export function useTheme() {
+  const { colors } = useRoles()
+  const presetId = useThemeStore((s) => s.presetId)
+  const adjustments = useThemeStore((s) => s.adjustments)
+  const mode = useThemeStore((s) => s.mode)
+  const a11y = useThemeStore((s) => s.a11y)
+  return useMemo(() => generateTheme(colors, PRESETS_BY_ID[presetId], adjustments, mode, a11y), [colors, presetId, adjustments, mode, a11y])
+}
+
+/** CSS value for the wallpaper layer: the image, or a palette gradient when there is none (shared links). */
+export function useWallpaper(): string {
+  const src = useThemeStore((s) => s.image?.src)
+  return src ? `url("${src}")` : 'var(--wallpaper-fallback)'
+}

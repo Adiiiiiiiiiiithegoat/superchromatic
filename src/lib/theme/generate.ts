@@ -91,8 +91,8 @@ export function generateTheme(palette: RoleColors, preset: Preset, adj: Adjustme
   // Status colours: fixed semantic hues nudged 12% toward Primary so they belong to the palette.
   const avgChroma = (primary.c + secondary.c + accent.c) / 3
   const status = (hue: number, l: Record<Mode, number>): Oklch => ({ l: l[mode], c: clamp(avgChroma, 0.08, 0.17), h: lerpHue(hue, primary.h, 0.12) })
-  const success = status(150, { light: 0.55, dark: 0.75 })
-  const warning = status(75, { light: 0.68, dark: 0.8 })
+  let success = status(150, { light: 0.55, dark: 0.75 })
+  let warning = status(75, { light: 0.68, dark: 0.8 })
   let danger = status(25, { light: 0.55, dark: 0.72 })
 
   // ── 4. What can actually sit behind text? ───────────────────────────────────
@@ -140,7 +140,20 @@ export function generateTheme(palette: RoleColors, preset: Preset, adj: Adjustme
   secondaryText = fix('secondary', secondaryText, [rendered(secondary)], TEXT_TARGET)
   accentText = fix('accent', accentText, [rendered(accent)], TEXT_TARGET)
   badgeText = fix('badge', badgeText, [rendered(badgeBg)], TEXT_TARGET)
-  danger = fix('danger', danger, onCard, TEXT_TARGET)
+  // Status text sits on the card, inside a 14% tint of itself (see .pv-status).
+  const statusBgs = (c: Oklch) => [...onCard, ...onCard.map((b) => blend(rendered(c), 0.14, b))]
+  // The tint moves with the colour, so re-fix until it settles (converges in 1–3 rounds).
+  const fixStatus = (key: string, c: Oklch) => {
+    for (let i = 0; i < 5; i++) {
+      const next = fix(key, c, statusBgs(c), TEXT_TARGET + 0.05) // small margin for the tint drift
+      if (next.l === c.l) break
+      c = next
+    }
+    return c
+  }
+  danger = fixStatus('danger', danger)
+  success = fixStatus('success', success)
+  warning = fixStatus('warning', warning)
   inputBorder = fix('inputBorder', inputBorder, onInput, UI_TARGET)
   ring = fix('ring', ring, page, UI_TARGET)
 
@@ -158,7 +171,9 @@ export function generateTheme(palette: RoleColors, preset: Preset, adj: Adjustme
     row('accent', 'Accent fill', accentText, [rendered(accent)], TEXT_TARGET, fixed.has('accent')),
     row('badge', 'Badge', badgeText, [rendered(badgeBg)], TEXT_TARGET, fixed.has('badge')),
     row('input-text', 'Input text', text, onInput, TEXT_TARGET, fixed.has('text') || inputRaised),
-    row('error', 'Error message', danger, onCard, TEXT_TARGET, fixed.has('danger')),
+    row('error', 'Error / danger text', danger, statusBgs(danger), TEXT_TARGET, fixed.has('danger')),
+    row('success', 'Success status', success, statusBgs(success), TEXT_TARGET, fixed.has('success')),
+    row('warning', 'Warning status', warning, statusBgs(warning), TEXT_TARGET, fixed.has('warning')),
     row('input-border', 'Input border', inputBorder, onInput, UI_TARGET, fixed.has('inputBorder')),
     row('ring', 'Focus ring', ring, page, UI_TARGET, fixed.has('ring')),
   ]

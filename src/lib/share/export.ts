@@ -41,3 +41,21 @@ export function download(text: string, filename: string, mime: string) {
   a.click()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
+
+/** Clipboard write with a fallback for browsers/contexts without the async Clipboard API. */
+export async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch {
+    const ta = document.createElement('textarea')
+    ta.value = text
+    ta.style.position = 'fixed'
+    ta.style.opacity = '0'
+    document.body.appendChild(ta)
+    ta.select()
+    const ok = document.execCommand('copy')
+    ta.remove()
+    return ok
+  }
+}
