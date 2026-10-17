@@ -169,7 +169,7 @@ test('preview links and buttons go somewhere', async ({ page }) => {
   await preview.getByRole('button', { name: 'Get started' }).click()
   await expect(preview.getByPlaceholder('Robotics Society')).toBeFocused()
 
-  await preview.getByRole('navigation', { name: 'Orbit main' }).getByRole('link', { name: 'Changelog' }).click()
+  await preview.getByRole('navigation', { name: 'Company' }).getByRole('link', { name: 'Careers' }).click()
   await expect(page.getByText('isn’t a real page')).toBeVisible()
   expect(page.url()).not.toContain('#')
 })

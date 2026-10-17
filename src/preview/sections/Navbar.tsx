@@ -57,7 +57,7 @@ export function Logo() {
   )
 }
 
-const LINKS = ['Features', 'Pricing', 'Customers', 'Changelog']
+const LINKS = ['Features', 'Pricing', 'Customers']
 
 export function Navbar() {
   const [open, setOpen] = useState(false)

@@ -69,4 +69,5 @@
 
 ## Preview links
 - [x] Nav, footer and CTA buttons scroll to sections; pretend pages explain themselves
+- [x] Remove Changelog link from nav and footer
 - [x] Deploy + live smoke test

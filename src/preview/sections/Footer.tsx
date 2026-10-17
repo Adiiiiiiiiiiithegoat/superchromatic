@@ -1,7 +1,7 @@
 import { Logo, PvLink } from './Navbar'
 
 const COLUMNS = [
-  { title: 'Product', links: ['Features', 'Pricing', 'Changelog', 'Roadmap'] },
+  { title: 'Product', links: ['Features', 'Pricing', 'Roadmap'] },
   { title: 'Clubs', links: ['Case studies', 'Templates', 'Community'] },
   { title: 'Company', links: ['About', 'Careers', 'Privacy'] },
 ]
