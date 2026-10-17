@@ -25,6 +25,7 @@
 | Bonus: transitions & micro-animations | ✅ | `@property` in `src/index.css`, root transition in `Preview.tsx`, Motion in Palette/RoleSlots/PresetPicker/TopBar/BottomSheet |
 | Export (CSS / JSON / Tailwind v4, copy + download) | ✅ | `src/lib/share/export.ts`, `ExportModal.tsx` |
 | Share URL + localStorage persistence | ✅ | `src/lib/share/url.ts`, `persist` in the store |
+| Uploads survive reloads (IndexedDB, last 5) | ✅ | `src/lib/storage/imageStore.ts`, `openUpload`/`refreshRecent` in the store, recent row in `UploadZone.tsx` |
 | 5 original sample wallpapers, first loads on first visit | ✅ | `scripts/render-samples.mjs` → `public/samples/` |
 | README | ✅ | `README.md` |
 | Video script | ✅ | `docs/VIDEO_SCRIPT.md` |
@@ -46,6 +47,6 @@
 - Tablet drawer pushes the preview aside (in-flow, resizable 280–520px, keyboard-resizable separator) rather than overlaying it, so you can still see the theme while editing.
 - "Compare" shows the theme from before the latest burst of changes (a theme counts as settled after 700ms of no changes).
 - Sample wallpapers: procedurally built SVGs (seeded RNG for stars/buildings/bubbles/bokeh) rasterised to JPEG with headless Chromium, because `createImageBitmap` can't decode SVG blobs inside a worker, and uploads only accept PNG/JPG/WebP.
-- Uploaded images aren't persisted across reloads (blob URLs die with the tab); samples are. The palette and settings persist either way.
+- **Upload persistence (17 Oct 2026):** uploads go to IndexedDB (original Blob + id, name, upload time, extracted palette), newest 5 kept. localStorage stores the upload's id with an empty `src`, because the old blob: URL is dead after a reload. On load, `openUpload(id, keepPalette)` reads the Blob back and makes a new object URL without re-extracting. If the record is missing or IndexedDB is unavailable, the first sample loads instead. The palette saved with an upload is refreshed after every successful extraction (including a strategy or k change), so "Recent uploads" restores the latest extraction. Picked or custom colours stay in the session only. Thumbnails use their own object URLs, separate from the main image's, so removing a recent item never breaks the wallpaper on screen. Removing the upload that's currently showing leaves it on screen, but it won't come back after a reload.
 - Preview `color-scheme` follows the theme mode, so native radios/checkboxes/selects match the theme instead of the dark app chrome (caught in screenshot review).
 - Screenshot review fixes: Export button label was invisible (class conflict); contrast rows wrapped onto 3 lines.

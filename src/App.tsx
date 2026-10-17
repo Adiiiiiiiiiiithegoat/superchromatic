@@ -22,15 +22,21 @@ function useLayout(): Layout {
   }, get)
 }
 
-/** First load: a shared link wins, then the last session (persisted), then the first sample. */
+/** First load: a shared link wins, then the last session (persisted, uploads from IndexedDB), then the first sample. */
 function useStartup() {
   useEffect(() => {
     const store = useThemeStore.getState()
     const shared = decodeShare(location.hash)
+    void store.refreshRecent()
     if (shared) {
       store.applyShare(shared)
       history.replaceState(null, '', location.pathname + location.search)
       store.notify('Theme loaded from link. Wallpaper not included, showing a palette gradient.')
+    } else if (store.image?.kind === 'upload' && store.image.id) {
+      // Bring the wallpaper back but keep the saved palette, roles and sliders: no re-extraction.
+      void store.openUpload(store.image.id, true).then((ok) => {
+        if (!ok) void loadSample(SAMPLES[0])
+      })
     } else if (store.swatches.length === 0) {
       void loadSample(SAMPLES[0])
     }

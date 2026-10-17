@@ -8,12 +8,23 @@ import { parseToOklch } from '../lib/theme/oklch'
 import { PRESETS_BY_ID, type PresetId } from '../lib/theme/presets'
 import { resolveRoles } from '../lib/theme/roles'
 import type { ShareState } from '../lib/share/url'
+import { deleteUpload, getUpload, listUploads, saveUpload } from '../lib/storage/imageStore'
 import { ROLES, type A11yOptions, type Adjustments, type Mode, type Role, type RoleOverrides, type Strategy, type Swatch, type SwatchSource } from '../lib/types'
 
 export interface ImageRef {
   src: string
   name: string
   kind: 'sample' | 'upload'
+  /** Uploads only: the IndexedDB key and upload time. */
+  id?: string
+  uploadedAt?: number
+}
+
+export interface RecentUpload {
+  id: string
+  name: string
+  /** Object URL of the stored blob, revoked when the item leaves the list. */
+  thumb: string
 }
 
 interface ThemeState {
@@ -31,10 +42,14 @@ interface ThemeState {
   a11y: A11yOptions
   hintDismissed: boolean
   toast: { id: number; message: string } | null
+  recent: RecentUpload[]
 
   loadImage: (blob: Blob, image: ImageRef) => Promise<void>
   uploadFile: (file: File) => void
   reextract: () => Promise<void>
+  openUpload: (id: string, keepPalette?: boolean) => Promise<boolean>
+  removeUpload: (id: string) => Promise<void>
+  refreshRecent: () => Promise<void>
   setStrategy: (s: Strategy) => void
   setK: (k: number) => void
   toggleSelected: (id: string) => void
@@ -85,6 +100,7 @@ export const useThemeStore = create<ThemeState>()(
       a11y: { autoFix: true },
       hintDismissed: false,
       toast: null,
+      recent: [],
 
       async loadImage(blob, image) {
         currentBlob = blob
@@ -103,7 +119,7 @@ export const useThemeStore = create<ThemeState>()(
           set({ status: 'error', error: `That image is ${(file.size / 1048576).toFixed(1)} MB. The limit is 15 MB.` })
           return
         }
-        void get().loadImage(file, { src: URL.createObjectURL(file), name: file.name || 'Pasted image', kind: 'upload' })
+        void get().loadImage(file, { src: URL.createObjectURL(file), name: file.name || 'Pasted image', kind: 'upload', id: uid('upload'), uploadedAt: Date.now() })
       },
 
       async reextract() {
@@ -113,13 +129,44 @@ export const useThemeStore = create<ThemeState>()(
         set({ status: 'extracting', error: null })
         try {
           currentBlob ??= await (await fetch(image.src)).blob()
-          const swatches = await extractPalette(currentBlob, strategy, k)
+          const blob = currentBlob
+          const swatches = await extractPalette(blob, strategy, k)
           if (id !== latestRequest) return // a newer request superseded this one
           set({ swatches, selected: swatches.map((s) => s.id), overrides: {}, status: 'idle' })
+          if (image.kind === 'upload' && image.id) {
+            await saveUpload({ id: image.id, name: image.name, uploadedAt: image.uploadedAt ?? Date.now(), blob, swatches })
+            await get().refreshRecent()
+          }
         } catch (err) {
           if (id !== latestRequest) return
           set({ status: 'error', error: err instanceof Error ? err.message : 'Could not read that image.' })
         }
+      },
+
+      async openUpload(id, keepPalette = false) {
+        const upload = await getUpload(id)
+        if (!upload) return false
+        latestRequest++ // cancel any extraction still running for the previous image
+        currentBlob = upload.blob
+        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl)
+        currentObjectUrl = URL.createObjectURL(upload.blob)
+        const image: ImageRef = { src: currentObjectUrl, name: upload.name, kind: 'upload', id: upload.id, uploadedAt: upload.uploadedAt }
+        const palette = { swatches: upload.swatches, selected: upload.swatches.map((s) => s.id), overrides: {} }
+        set({ image, status: 'idle', error: null, ...(keepPalette ? {} : palette) })
+        return true
+      },
+
+      async removeUpload(id) {
+        await deleteUpload(id)
+        await get().refreshRecent()
+      },
+
+      async refreshRecent() {
+        const old = get().recent
+        const uploads = await listUploads()
+        const recent = uploads.map((u) => old.find((r) => r.id === u.id) ?? { id: u.id, name: u.name, thumb: URL.createObjectURL(u.blob) })
+        for (const r of old) if (!recent.includes(r)) URL.revokeObjectURL(r.thumb)
+        set({ recent })
       },
 
       setStrategy(strategy) {
@@ -186,7 +233,10 @@ export const useThemeStore = create<ThemeState>()(
       setAutoFix: (autoFix) => set({ a11y: { autoFix } }),
 
       applyShare(s) {
+        latestRequest++
         currentBlob = null
+        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl)
+        currentObjectUrl = null
         set({ ...s, image: null, status: 'idle', error: null })
       },
 
@@ -196,9 +246,9 @@ export const useThemeStore = create<ThemeState>()(
     {
       name: 'superchromatic:v1',
       storage: createJSONStorage(() => safeStorage),
-      // Uploaded images are blob: URLs that die with the tab, so only sample images are remembered.
+      // An upload's blob: URL dies with the tab; its bytes live in IndexedDB and get a fresh URL on load.
       partialize: (s) => ({
-        image: s.image?.kind === 'sample' ? s.image : null,
+        image: s.image?.kind === 'upload' ? { ...s.image, src: '' } : s.image,
         strategy: s.strategy,
         k: s.k,
         swatches: s.swatches,

@@ -35,3 +35,12 @@
 - [x] GitHub repo pushed
 - [x] Vercel production deploy
 - [x] Final report in NOTES.md
+
+## Upload persistence
+- [x] IndexedDB wrapper for uploads (last 5)
+- [x] Restore uploaded wallpaper on reload without re-extraction
+- [x] Recent uploads row with remove buttons
+- [x] Fallback to first sample when storage is unavailable
+- [x] Playwright reload / pruning / fallback tests
+- [x] README + NOTES updated
+- [ ] Production deploy + live smoke test

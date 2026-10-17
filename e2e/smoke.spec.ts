@@ -1,4 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
+import { readFileSync } from 'node:fs'
 
 const PRESETS = ['minimal', 'vibrant', 'warm', 'cool', 'glass', 'neon', 'pastel', 'mono']
 
@@ -93,3 +94,49 @@ for (const width of [390, 768, 1024, 1440]) {
     expect(overflow.scroll).toBeLessThanOrEqual(0)
   })
 }
+
+test('uploaded wallpaper survives a reload', async ({ page }) => {
+  await ready(page)
+  await page.getByTestId('file-input').setInputFiles('public/samples/aurora.jpg')
+  const recent = page.getByTestId('recent-uploads').locator('li')
+  await expect(recent).toHaveCount(1, { timeout: 15_000 })
+  const primary = await token(page, '--primary')
+  const wallpaper = page.getByRole('img', { name: 'Wallpaper: aurora.jpg' })
+  await expect(wallpaper).toBeVisible()
+
+  await page.reload()
+  await expect(wallpaper).toBeVisible({ timeout: 15_000 })
+  expect(await wallpaper.evaluate((img: HTMLImageElement) => img.src.startsWith('blob:') && img.naturalWidth > 0)).toBe(true)
+  await expect.poll(() => token(page, '--primary')).toBe(primary)
+  await expect(recent).toHaveCount(1)
+  await expect(page.getByRole('button', { name: 'Use recent upload: aurora.jpg' })).toHaveAttribute('aria-pressed', 'true')
+
+  // Samples don't clear the history; the × does.
+  await page.getByTestId('sample-deep-ocean').click()
+  await expect(recent).toHaveCount(1)
+  await page.getByRole('button', { name: 'Remove aurora.jpg from recent uploads' }).click()
+  await expect(page.getByTestId('recent-uploads')).toHaveCount(0)
+})
+
+test('recent uploads keep only the last five', async ({ page }) => {
+  await ready(page)
+  const buffer = readFileSync('public/samples/aurora.jpg')
+  const recent = page.getByTestId('recent-uploads').locator('li')
+  for (let i = 1; i <= 6; i++) {
+    await page.getByTestId('file-input').setInputFiles({ name: `wall-${i}.jpg`, mimeType: 'image/jpeg', buffer })
+    await expect(page.getByRole('button', { name: `Use recent upload: wall-${i}.jpg` })).toBeVisible({ timeout: 15_000 })
+  }
+  await expect(recent).toHaveCount(5)
+  await expect(page.getByRole('button', { name: 'Use recent upload: wall-1.jpg' })).toHaveCount(0)
+})
+
+test('without IndexedDB an upload falls back to the first sample on reload', async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(window, 'indexedDB', { get: () => { throw new Error('blocked') } }))
+  await ready(page)
+  await page.getByTestId('file-input').setInputFiles('public/samples/aurora.jpg')
+  await expect(page.getByRole('img', { name: 'Wallpaper: aurora.jpg' })).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByTestId('sample-sunset-dunes')).toHaveAttribute('aria-pressed', 'false')
+  await page.reload()
+  await expect(page.getByTestId('sample-sunset-dunes')).toHaveAttribute('aria-pressed', 'true', { timeout: 15_000 })
+  await expect(page.getByTestId('recent-uploads')).toHaveCount(0)
+})

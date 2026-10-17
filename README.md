@@ -26,7 +26,7 @@
 - ✅ **Accessibility-aware colours**: a WCAG 2.x contrast engine with auto-fix (on by default) and a 14-pair report showing AA/AAA badges and "fixed" markers. The top-bar chip reads e.g. "✓ 14/14 AA". Glass surfaces are checked against the worst case behind them.
 - ✅ **Smooth transitions & micro-animations**: colour tokens are registered with `@property`, so the whole theme interpolates. Swatches stagger in and spring when selected. Role chips glide between slots (shared layout), the preset outline slides from card to card, slider thumbs grow while dragged, a scan line sweeps the image during extraction, and "Copy CSS" gives a sparkle burst. All of it switches off under `prefers-reduced-motion`.
 
-**Extras**: export as CSS variables, JSON tokens or a Tailwind v4 `@theme` block (copy or download); a shareable URL that stores the palette, roles, preset, sliders and mode in the hash; the last session saved in localStorage; light/dark preview; desktop/tablet/mobile preview frames using container queries; hold-to-compare with the previous theme; 5 original sample wallpapers.
+**Extras**: export as CSS variables, JSON tokens or a Tailwind v4 `@theme` block (copy or download); a shareable URL that stores the palette, roles, preset, sliders and mode in the hash; the last session saved in localStorage, with uploaded wallpapers kept in IndexedDB (see [Persistence](#persistence)); light/dark preview; desktop/tablet/mobile preview frames using container queries; hold-to-compare with the previous theme; 5 original sample wallpapers.
 
 ## Run it
 
@@ -66,6 +66,7 @@ flowchart LR
 | `src/lib/a11y/contrast.ts` | WCAG luminance/contrast, alpha blending, lightness auto-fix |
 | `src/lib/share/` | URL hash encode/decode, CSS/JSON/Tailwind export |
 | `src/store/useThemeStore.ts` | zustand store (persisted), `useTheme()` |
+| `src/lib/storage/imageStore.ts` | IndexedDB wrapper for recent uploads |
 | `src/components/controls/` | Upload + eyedropper, palette, roles, presets, sliders, contrast report, export modal, bottom sheet |
 | `src/preview/` | The Orbit site; `preview.css` uses only `var(--…)` |
 
@@ -108,6 +109,14 @@ flowchart LR
 - **Report panel**: every pair with its ratio, an AA/AAA/Fail badge, an "Aa" sample and a wrench marker if auto-fix changed it. The summary chip sits in the top bar.
 - **The app itself**: native `<details>`, `<dialog>`, range inputs and selects for free keyboard support; visible focus rings; labels and ARIA on every control; an eyedropper that works by keyboard; the preview's native controls follow the theme's `color-scheme`; `prefers-reduced-motion` turns off every animation.
 
+## Persistence
+
+- **Settings**: the palette, roles, preset, sliders, mode and which wallpaper is showing are saved to localStorage (zustand `persist`).
+- **Uploaded wallpapers**: the original image Blob goes into IndexedDB (`src/lib/storage/imageStore.ts`, no dependencies) with its id, filename, upload time and extracted palette. The 5 newest are kept; a 6th upload deletes the oldest.
+- **Reload**: if the last wallpaper was an upload, its Blob is read back and shown through a fresh object URL. Extraction does not run again, so the saved palette, roles, preset and sliders come back exactly as you left them.
+- **Recent uploads**: a row of thumbnails under the samples. Click one to restore that image and its palette; × removes it. The row is hidden when it's empty. Switching to a sample or opening a share link leaves the history alone.
+- **No storage?** Every IndexedDB call is wrapped in try/catch. In private browsing, with storage blocked or with the quota full, uploads just aren't remembered and a reload shows the first sample wallpaper. Object URLs are revoked as soon as nothing uses them.
+
 ## Design decisions
 
 - **Neutral studio chrome** (#0B0B0C, 1px hairlines, Geist + Geist Mono) so the user's theme is the star. The only themed pixel in the chrome is the wordmark dot (Primary → Accent). The chrome follows the system light/dark preference.
@@ -119,7 +128,7 @@ flowchart LR
 
 ## Limitations & future work
 
-- Share links don't include the wallpaper (URLs can't hold images); a palette gradient stands in for it. Uploaded images aren't kept across reloads either (sample images are).
+- Share links don't include the wallpaper (URLs can't hold images); a palette gradient stands in for it.
 - Glass contrast uses the extracted extremes, not every pixel. A blurred wallpaper usually sits within that range, but a tiny very bright highlight could fall outside it.
 - Contrast uses WCAG 2.x. APCA (WCAG 3 draft) would judge thin and large text better.
 - Future: export to Figma variables, more preview templates (dashboard, mobile app), a palette history.

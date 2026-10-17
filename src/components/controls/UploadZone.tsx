@@ -16,6 +16,9 @@ export function WallpaperSection() {
   const status = useThemeStore((s) => s.status)
   const error = useThemeStore((s) => s.error)
   const uploadFile = useThemeStore((s) => s.uploadFile)
+  const recent = useThemeStore((s) => s.recent)
+  const openUpload = useThemeStore((s) => s.openUpload)
+  const removeUpload = useThemeStore((s) => s.removeUpload)
   const hintDismissed = useThemeStore((s) => s.hintDismissed)
   const dismissHint = useThemeStore((s) => s.dismissHint)
   const [dragging, setDragging] = useState(false)
@@ -63,7 +66,7 @@ export function WallpaperSection() {
       />
 
       <div className={`relative rounded-xl border border-dashed transition-colors ${dragging ? 'border-ink bg-hover' : 'border-line-strong'}`}>
-        {image ? (
+        {image?.src ? (
           <ImageInspector src={image.src} name={image.name} scanning={status === 'extracting'} />
         ) : (
           <button type="button" onClick={() => input.current?.click()} className="flex h-40 w-full flex-col items-center justify-center gap-2 text-ink-muted hover:text-ink">
@@ -108,6 +111,37 @@ export function WallpaperSection() {
           ))}
         </ul>
       </div>
+
+      {recent.length > 0 && (
+        <div>
+          <p className="mb-1.5 text-[12px] text-ink-subtle">Recent uploads</p>
+          <ul data-testid="recent-uploads" className="grid grid-cols-5 gap-1.5">
+            {recent.map((r) => (
+              <li key={r.id} className="relative">
+                <button
+                  type="button"
+                  aria-pressed={image?.id === r.id}
+                  aria-label={`Use recent upload: ${r.name}`}
+                  title={r.name}
+                  onClick={() => void openUpload(r.id)}
+                  className={`block aspect-[4/3] w-full overflow-hidden rounded-md ring-offset-2 ring-offset-panel transition ${image?.id === r.id ? 'ring-2 ring-ink' : 'opacity-80 hover:opacity-100'}`}
+                >
+                  <img src={r.thumb} alt="" className="size-full object-cover" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Remove ${r.name} from recent uploads`}
+                  title="Remove"
+                  onClick={() => void removeUpload(r.id)}
+                  className="absolute top-0.5 right-0.5 grid size-4 place-items-center rounded-full bg-black/60 text-white hover:bg-black/80"
+                >
+                  <X aria-hidden className="size-3" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }
