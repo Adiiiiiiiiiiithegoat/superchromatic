@@ -17,7 +17,7 @@ function TabsCard() {
   const [tab, setTab] = useState<(typeof TABS)[number]>('Overview')
   const [active, setActive] = useState<string[]>(['Workshops', 'Talks'])
   return (
-    <div className="pv-card p-5">
+    <div className="pv-card p-5" data-pv-section="dashboard">
       <div role="tablist" aria-label="Club dashboard" className="pv-tabs">
         {TABS.map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t} className="pv-tab" onClick={() => setTab(t)}>

@@ -11,7 +11,7 @@ const FEATURES = [
 
 export function Features() {
   return (
-    <section aria-labelledby="pv-features" className="pv-surface">
+    <section aria-labelledby="pv-features" data-pv-section="features" className="pv-surface">
       <div className="mx-auto max-w-6xl px-5 py-16">
         <p className="pv-badge">Features</p>
         <h2 id="pv-features" className="pv-h mt-3 max-w-2xl text-3xl font-bold @xl:text-4xl">Everything a club needs, nothing it doesn’t</h2>

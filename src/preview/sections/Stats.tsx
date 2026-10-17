@@ -8,7 +8,7 @@ const STATS = [
 
 export function Stats() {
   return (
-    <section aria-label="Key numbers" className="mx-auto max-w-6xl px-5 pb-14">
+    <section aria-label="Key numbers" data-pv-section="numbers" className="mx-auto max-w-6xl px-5 pb-14">
       <ul className="grid gap-4 @2xl:grid-cols-3">
         {STATS.map((s) => (
           <li key={s.label} className="pv-card p-5">

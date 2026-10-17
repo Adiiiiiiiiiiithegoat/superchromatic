@@ -66,3 +66,7 @@
 - [x] Guarantee every sizeable colour family a swatch (blue fix)
 - [x] Rainbow, Matching and Soft styles + tests
 - [x] Deploy + live smoke test
+
+## Preview links
+- [x] Nav, footer and CTA buttons scroll to sections; pretend pages explain themselves
+- [x] Deploy + live smoke test

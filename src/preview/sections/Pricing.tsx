@@ -1,5 +1,6 @@
 import { Check } from 'lucide-react'
 import { useState } from 'react'
+import { goTo, notReal } from './Navbar'
 
 const TIERS = [
   { name: 'Starter', monthly: 0, blurb: 'For new clubs finding their feet.', perks: ['Up to 100 members', '5 events / month', 'QR check-in'], cta: 'Start free' },
@@ -10,7 +11,7 @@ const TIERS = [
 export function Pricing() {
   const [yearly, setYearly] = useState(false)
   return (
-    <section aria-labelledby="pv-pricing" className="pv-surface">
+    <section aria-labelledby="pv-pricing" data-pv-section="pricing" className="pv-surface">
       <div className="mx-auto max-w-6xl px-5 py-16">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -49,7 +50,13 @@ export function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <button type="button" className={`pv-btn mt-6 w-full ${t.featured ? 'pv-btn-accent' : 'pv-btn-ghost'}`}>{t.cta}</button>
+                <button
+                  type="button"
+                  className={`pv-btn mt-6 w-full ${t.featured ? 'pv-btn-accent' : 'pv-btn-ghost'}`}
+                  onClick={(e) => (t.monthly === null ? notReal(t.cta) : goTo(e.currentTarget, 'signup'))}
+                >
+                  {t.cta}
+                </button>
               </li>
             )
           })}

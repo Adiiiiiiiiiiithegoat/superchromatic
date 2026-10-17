@@ -55,7 +55,7 @@ export function PreviewSite({ vars, glass, mode, wallpaper, compact }: { vars: R
             <Hero glass={glass} />
             <Stats />
             <Features />
-            <section aria-label="Sign up and dashboard" className="mx-auto grid max-w-6xl items-start gap-5 px-5 py-16 @4xl:grid-cols-[1fr_1.1fr]">
+            <section aria-label="Sign up and dashboard" data-pv-section="signup" className="mx-auto grid max-w-6xl items-start gap-5 px-5 py-16 @4xl:grid-cols-[1fr_1.1fr]">
               <SignupForm />
               <Showcase />
             </section>

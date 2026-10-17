@@ -1,5 +1,6 @@
 import { ArrowRight, CalendarDays, MapPin } from 'lucide-react'
 import { useState } from 'react'
+import { goTo } from './Navbar'
 
 export function AvatarStack({ names = ['AK', 'RM', 'JS', 'TP'] }: { names?: string[] }) {
   const fills = [
@@ -69,10 +70,12 @@ export function Hero({ glass }: { glass: boolean }) {
             Orbit is the event OS for student clubs. Plan, publish, sell tickets and check people in, without juggling twelve spreadsheets.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <button type="button" className="pv-btn pv-btn-primary">
+            <button type="button" className="pv-btn pv-btn-primary" onClick={(e) => goTo(e.currentTarget, 'signup')}>
               Start free <ArrowRight aria-hidden className="size-4" />
             </button>
-            <button type="button" className="pv-btn pv-btn-secondary">Book a demo</button>
+            <button type="button" className="pv-btn pv-btn-secondary" onClick={(e) => goTo(e.currentTarget, 'dashboard')}>
+              Book a demo
+            </button>
           </div>
           <div className="mt-7 flex items-center gap-3">
             <AvatarStack />

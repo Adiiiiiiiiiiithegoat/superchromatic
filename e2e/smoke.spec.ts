@@ -150,3 +150,26 @@ test('hover shows the styled tooltip instead of the native one', async ({ page }
   await page.mouse.move(0, 0)
   await expect(page.getByTestId('tooltip')).toHaveCount(0)
 })
+
+test('preview links and buttons go somewhere', async ({ page }) => {
+  await ready(page)
+  const preview = page.getByTestId('preview-root')
+  const inView = (name: string) => preview.getByRole('heading', { name }).evaluate((h) => {
+    const box = h.closest('.pv-scroll')!.getBoundingClientRect()
+    const r = h.getBoundingClientRect()
+    return r.top >= box.top - 1 && r.bottom <= box.bottom + 1
+  })
+
+  await preview.getByRole('navigation', { name: 'Orbit main' }).getByRole('link', { name: 'Pricing' }).click()
+  await expect.poll(() => inView('Simple pricing')).toBe(true)
+
+  await preview.getByRole('navigation', { name: 'Orbit main' }).getByRole('link', { name: 'Features' }).click()
+  await expect.poll(() => inView('Everything a club needs, nothing it doesn’t')).toBe(true)
+
+  await preview.getByRole('button', { name: 'Get started' }).click()
+  await expect(preview.getByPlaceholder('Robotics Society')).toBeFocused()
+
+  await preview.getByRole('navigation', { name: 'Orbit main' }).getByRole('link', { name: 'Changelog' }).click()
+  await expect(page.getByText('isn’t a real page')).toBeVisible()
+  expect(page.url()).not.toContain('#')
+})
