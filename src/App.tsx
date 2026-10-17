@@ -4,6 +4,7 @@ import { BottomSheet } from './components/controls/BottomSheet'
 import { ControlsPanel } from './components/controls/ControlsPanel'
 import { loadSample } from './components/controls/UploadZone'
 import { Toast } from './components/Toast'
+import { Tooltips } from './components/Tooltip'
 import { TopBar } from './components/TopBar'
 import { SAMPLES } from './lib/samples'
 import { decodeShare } from './lib/share/url'
@@ -113,6 +114,7 @@ export default function App() {
         </div>
         {layout === 'mobile' && <BottomSheet />}
         <Toast />
+        <Tooltips />
       </div>
     </MotionConfig>
   )

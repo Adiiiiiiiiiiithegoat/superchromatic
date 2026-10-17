@@ -140,3 +140,13 @@ test('without IndexedDB an upload falls back to the first sample on reload', asy
   await expect(page.getByTestId('sample-sunset-dunes')).toHaveAttribute('aria-pressed', 'true', { timeout: 15_000 })
   await expect(page.getByTestId('recent-uploads')).toHaveCount(0)
 })
+
+test('hover shows the styled tooltip instead of the native one', async ({ page }) => {
+  await ready(page)
+  const natural = page.getByRole('button', { name: 'Natural' })
+  await natural.hover()
+  await expect(page.getByTestId('tooltip')).toHaveText(/colours you notice first/)
+  await expect(natural).not.toHaveAttribute('title')
+  await page.mouse.move(0, 0)
+  await expect(page.getByTestId('tooltip')).toHaveCount(0)
+})

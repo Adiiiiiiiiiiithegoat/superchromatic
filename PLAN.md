@@ -57,3 +57,7 @@
 - [x] Plain-word labels across controls, toasts and Save dialog
 - [x] Tests, README, NOTES and video script updated
 - [x] Commit, push, deploy + live smoke test
+
+## Tooltips
+- [x] Styled app-wide tooltip replacing native title boxes
+- [x] Deploy + live smoke test
