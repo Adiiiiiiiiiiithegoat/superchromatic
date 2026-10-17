@@ -1,5 +1,6 @@
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { PRESETS_BY_ID } from '../lib/theme/presets'
+import type { Mode } from '../lib/types'
 import { COLOR_TOKENS } from '../lib/theme/tokens'
 import { useTheme, useThemeStore, useWallpaper } from '../store/useThemeStore'
 import { type Device, PreviewToolbar } from './PreviewToolbar'
@@ -36,8 +37,9 @@ function useSettledPrevious<T>(value: T, delay = 700): T {
 }
 
 /** The Orbit site. Its only styling input is the token map, set as CSS variables on the root. */
-export function PreviewSite({ vars, glass, wallpaper, compact }: { vars: Record<string, string>; glass: boolean; wallpaper: string; compact: boolean }) {
-  const style = { ...vars, '--wallpaper': wallpaper, transitionProperty: TRANSITION_PROPERTY } as CSSProperties
+export function PreviewSite({ vars, glass, mode, wallpaper, compact }: { vars: Record<string, string>; glass: boolean; mode: Mode; wallpaper: string; compact: boolean }) {
+  // color-scheme makes native controls (radios, selects, scrollbars) match the theme, not the app chrome.
+  const style = { ...vars, '--wallpaper': wallpaper, colorScheme: mode, transitionProperty: TRANSITION_PROPERTY } as CSSProperties
   return (
     <div data-testid="preview-root" className="pv-root" style={style}>
       {glass && (
@@ -69,11 +71,12 @@ export function PreviewSite({ vars, glass, wallpaper, compact }: { vars: Record<
 export function Preview({ compact }: { compact: boolean }) {
   const theme = useTheme()
   const presetId = useThemeStore((s) => s.presetId)
+  const mode = useThemeStore((s) => s.mode)
   const wallpaper = useWallpaper()
   const [device, setDevice] = useState<Device>('desktop')
   const [comparing, setComparing] = useState(false)
   const glass = PRESETS_BY_ID[presetId].background === 'wallpaper'
-  const current = useMemo(() => ({ vars: theme.vars, glass }), [theme.vars, glass])
+  const current = useMemo(() => ({ vars: theme.vars, glass, mode }), [theme.vars, glass, mode])
   const previous = useSettledPrevious(current)
   const shown = comparing ? previous : current
 
@@ -86,7 +89,7 @@ export function Preview({ compact }: { compact: boolean }) {
           className="mx-auto h-full max-w-full min-w-[320px] overflow-hidden sm:rounded-xl sm:border sm:border-line"
           style={{ width: compact ? '100%' : WIDTHS[device], resize: compact ? 'none' : 'horizontal' }}
         >
-          <PreviewSite vars={shown.vars} glass={shown.glass} wallpaper={wallpaper} compact={compact} />
+          <PreviewSite vars={shown.vars} glass={shown.glass} mode={shown.mode} wallpaper={wallpaper} compact={compact} />
         </div>
       </div>
     </div>

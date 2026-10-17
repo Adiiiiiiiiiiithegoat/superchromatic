@@ -52,8 +52,8 @@ export function A11ySection() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[12.5px]">{c.label}</p>
-                <p className="font-mono text-[10.5px] text-ink-subtle">
-                  {c.fg} on {c.bg} · needs {c.target}:1
+                <p className="truncate font-mono text-[10.5px] text-ink-subtle" title={`${c.fg} on ${c.bg}, needs ${c.target}:1`}>
+                  {c.fg} / {c.bg}
                 </p>
               </div>
               {c.fixed && (
@@ -61,7 +61,7 @@ export function A11ySection() {
                   <Wrench aria-label="auto-fixed" className="size-3.5" />
                 </span>
               )}
-              <span className="w-12 text-right font-mono text-[11.5px]">{c.ratio.toFixed(2)}</span>
+              <span className="w-11 text-right font-mono text-[11.5px]" title={`Needs ${c.target}:1`}>{c.ratio.toFixed(2)}</span>
               <span
                 className={`w-10 rounded px-1 py-0.5 text-center font-mono text-[10.5px] font-medium ${
                   g === 'Fail' ? 'bg-bad/15 text-bad' : g === 'AAA' ? 'bg-good/20 text-good' : 'bg-good/10 text-good'

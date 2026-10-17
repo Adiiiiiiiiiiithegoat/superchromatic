@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 
 // Captures README/review screenshots. Run: npx playwright test screenshots
+test.use({ colorScheme: 'dark' }) // the studio chrome's default look
+
 const PRESETS = ['minimal', 'glass', 'neon', 'pastel']
 const SIZES = [
   { name: 'desktop', width: 1440, height: 900 },

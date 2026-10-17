@@ -79,11 +79,10 @@ test('share link restores the theme', async ({ page }) => {
 for (const width of [390, 768, 1024, 1440]) {
   test(`no horizontal scroll at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 })
-    await ready(page).catch(async () => {
-      // On mobile the palette lives in the bottom sheet's Palette tab.
-      await page.getByRole('tab', { name: 'Palette' }).click()
-      await expect(page.getByTestId('swatches').locator('li').first()).toBeVisible({ timeout: 15_000 })
-    })
+    await page.goto('/')
+    // On mobile the palette lives in the bottom sheet's Palette tab.
+    if (width < 640) await page.getByRole('tab', { name: 'Palette' }).click()
+    await expect(page.getByTestId('swatches').locator('li').first()).toBeVisible({ timeout: 15_000 })
     const overflow = await page.evaluate(() => {
       const offenders = [...document.querySelectorAll<HTMLElement>('body *')].filter((el) => {
         const r = el.getBoundingClientRect()

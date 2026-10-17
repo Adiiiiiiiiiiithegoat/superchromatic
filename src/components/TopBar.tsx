@@ -71,7 +71,7 @@ export function TopBar({ onToggleControls, controlsOpen }: { onToggleControls?: 
           <Clipboard aria-hidden className="size-3.5" /> <span className="max-md:hidden">Copy CSS</span>
           <AnimatePresence>{burst > 0 && <Sparkles key={burst} colors={[primary, accent, theme.vars['--secondary']]} />}</AnimatePresence>
         </button>
-        <button type="button" className={`${btn} border-ink bg-ink text-app hover:bg-ink hover:opacity-90`} onClick={() => setExportOpen(true)} aria-label="Export theme">
+        <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-md bg-ink px-2.5 text-[13px] font-medium text-app transition-opacity hover:opacity-85 max-sm:h-11 max-sm:px-3" onClick={() => setExportOpen(true)} aria-label="Export theme">
           <Download aria-hidden className="size-3.5" /> <span className="max-md:hidden">Export</span>
         </button>
       </div>
