@@ -22,8 +22,8 @@
 - ✅ **Responsive**: side-by-side panes at ≥1024px; a resizable left drawer from 640 to 1023px; under 640px the preview fills the screen and the controls live in a draggable bottom sheet (peek, half or full) with 44px touch targets. There is no horizontal scroll at any width (tested at 390, 768, 1024 and 1440px).
 
 **Bonuses**
-- ✅ **Multiple extraction strategies**: K-means (default), Median cut and Vibrant, plus an **eyedropper** on the image. It averages 5×5 pixels, shows a magnifier loupe on hover, and is keyboard-operable (arrow keys + Enter).
-- ✅ **Accessibility-aware colours**: a WCAG 2.x contrast engine with auto-fix (on by default) and a 14-pair report showing AA/AAA badges and "fixed" markers. The top-bar chip reads e.g. "✓ 14/14 AA". Glass surfaces are checked against the worst case behind them.
+- ✅ **Multiple extraction strategies**: K-means (default), Median cut and Vibrant, shown in the UI in plain words as **Natural**, **Varied** and **Vibrant** with a one-line explanation each. Plus an **eyedropper** on the image. It averages 5×5 pixels, shows a magnifier loupe on hover, and is keyboard-operable (arrow keys + Enter).
+- ✅ **Accessibility-aware colours**: a WCAG 2.x contrast engine with auto-fix (on by default) and a 14-pair report written for non-experts ("Main text on the page", "Great"/"Good"/"Hard to read", a short glossary of contrast, AA and AAA) with "fixed" markers. The Accessibility section header shows e.g. "✓ 14/14 readable". Glass surfaces are checked against the worst case behind them.
 - ✅ **Smooth transitions & micro-animations**: colour tokens are registered with `@property`, so the whole theme interpolates. Swatches stagger in and spring when selected. Role chips glide between slots (shared layout), the preset outline slides from card to card, slider thumbs grow while dragged, a scan line sweeps the image during extraction, and "Copy CSS" gives a sparkle burst. All of it switches off under `prefers-reduced-motion`.
 
 **Extras**: export as CSS variables, JSON tokens or a Tailwind v4 `@theme` block (copy or download); a shareable URL that stores the palette, roles, preset, sliders and mode in the hash; the last session saved in localStorage, with uploaded wallpapers kept in IndexedDB (see [Persistence](#persistence)); light/dark preview; desktop/tablet/mobile preview frames using container queries; hold-to-compare with the previous theme; 5 original sample wallpapers.
@@ -106,7 +106,7 @@ flowchart LR
 - **Auto-fix** (on by default): for each failing foreground, keep its hue and chroma and move only its OKLCH lightness. Both directions (toward black and toward white) are tried: a coarse scan brackets the first passing lightness, then a binary search narrows to the smallest change, and the direction needing the least change wins. Contrast is always measured on the *rendered* colour (gamut-mapped and rounded to hex), so a "pass" is real. A fuzz test checks the fix always ends ≥ target.
 - **Targets**: 4.5:1 for text (body, muted, button labels, badges, input text, error/success/warning text) and 3:1 for input borders and focus rings. One `--text` token is fixed against the page, cards *and* inputs at once, because it is used on all of them.
 - **Glass worst case**: translucent layers are composited (in sRGB, like the browser) over the overlay-tinted wallpaper's **darkest and lightest** extracted colours, and the worse result counts. If no text lightness can pass, the fixer raises the overlay opacity / card alpha in 5% steps until one can, and the report marks that pair "fixed".
-- **Report panel**: every pair with its ratio, an AA/AAA/Fail badge, an "Aa" sample and a wrench marker if auto-fix changed it. The summary chip sits in the top bar.
+- **Report panel**: every pair with its ratio, a Great (AAA) / Good (AA) / Hard to read badge, an "Aa" sample and a wrench marker if auto-fix changed it. The summary chip sits in the section header.
 - **The app itself**: native `<details>`, `<dialog>`, range inputs and selects for free keyboard support; visible focus rings; labels and ARIA on every control; an eyedropper that works by keyboard; the preview's native controls follow the theme's `color-scheme`; `prefers-reduced-motion` turns off every animation.
 
 ## Persistence
@@ -121,7 +121,7 @@ flowchart LR
 
 - **Neutral studio chrome** (#0B0B0C, 1px hairlines, Geist + Geist Mono) so the user's theme is the star. The only themed pixel in the chrome is the wordmark dot (Primary → Accent). The chrome follows the system light/dark preference.
 - **Fonts per preset**: Inter (Minimal: neutral), Space Grotesk (Vibrant: punchy), Fraunces (Warm: soft serif), Manrope (Cool: engineered), Sora (Glass: airy geometric), Unbounded + JetBrains Mono (Neon: loud display + techy labels), DM Sans (Pastel: friendly), IBM Plex Sans (Monochrome: sober).
-- **Wallpaper band**: every non-Glass preset shows the wallpaper behind the hero's event card, so the blur and overlay sliders always do something visible.
+- **Palette mesh**: every non-Glass preset puts a slowly drifting mesh gradient of the palette (primary, accent, secondary and a blend, over the page colour) behind the hero's event card, instead of a blurred copy of the wallpaper. Blur and overlay still apply to it, and the drift stops under reduced motion. Glass shows the real wallpaper behind the whole page.
 - **Mobile bottom sheet** with tabs instead of a long scrolling panel, so the preview stays visible while you tweak it.
 - **Performance**: extraction in a Worker on a 200px copy; the eyedropper samples a cached canvas; preset thumbnails use `useDeferredValue` so they never slow the main preview.
 - **Determinism**: the same image always gives the same palette, which matters for share links and demos.

@@ -3,21 +3,23 @@ import { COLOR_TOKENS } from '../theme/tokens'
 export type ExportFormat = 'css' | 'json' | 'tailwind'
 
 const isColor = (name: string) => (COLOR_TOKENS as readonly string[]).includes(name)
+/** Everything except --wallpaper-fallback, which only exists for this app's share-link view. */
+const exported = (vars: Record<string, string>) => Object.entries(vars).filter(([k]) => k !== '--wallpaper-fallback')
 
 export function toCss(vars: Record<string, string>): string {
-  return `:root {\n${Object.entries(vars).map(([k, v]) => `  ${k}: ${v};`).join('\n')}\n}\n`
+  return `:root {\n${exported(vars).map(([k, v]) => `  ${k}: ${v};`).join('\n')}\n}\n`
 }
 
 export function toJson(vars: Record<string, string>, meta: Record<string, unknown>): string {
   const colors: Record<string, string> = {}
   const effects: Record<string, string> = {}
-  for (const [k, v] of Object.entries(vars)) (isColor(k) ? colors : effects)[k.slice(2)] = v
+  for (const [k, v] of exported(vars)) (isColor(k) ? colors : effects)[k.slice(2)] = v
   return JSON.stringify({ meta, colors, effects }, null, 2) + '\n'
 }
 
 /** Tailwind v4: colours become --color-*, so `bg-primary`, `text-text-muted` etc. just work. */
 export function toTailwind(vars: Record<string, string>): string {
-  const lines = Object.entries(vars).map(([k, v]) => {
+  const lines = exported(vars).map(([k, v]) => {
     const name = k.slice(2)
     if (isColor(k)) return `  --color-${name}: ${v};`
     if (name === 'radius') return `  --radius-theme: ${v};`

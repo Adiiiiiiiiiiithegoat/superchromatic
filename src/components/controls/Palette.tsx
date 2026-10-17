@@ -9,9 +9,10 @@ import { Slider } from './Slider'
 export const ROLE_LABEL: Record<Role, string> = { primary: 'Primary', secondary: 'Secondary', accent: 'Accent', background: 'Background' }
 
 const STRATEGIES: { id: Strategy; label: string; title: string }[] = [
-  { id: 'kmeans', label: 'K-means', title: 'Clusters pixels in OKLab; colours ranked by how much of the image they cover' },
-  { id: 'median', label: 'Median cut', title: 'Recursively splits the colour space at the median of its widest axis' },
-  { id: 'vibrant', label: 'Vibrant', title: 'Favours small but vivid pops of colour (chroma × √population)' },
+  // Plain-word names for k-means, median cut and the vibrant picker.
+  { id: 'kmeans', label: 'Natural', title: 'The colours you notice first, in the amounts they appear in the picture.' },
+  { id: 'median', label: 'Varied', title: 'A wider mix that also picks up the quieter colours hiding in the picture.' },
+  { id: 'vibrant', label: 'Vibrant', title: 'The boldest, brightest pops of colour, even tiny ones.' },
 ]
 
 export function PaletteSection() {
@@ -36,7 +37,8 @@ export function PaletteSection() {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Segmented label="Extraction strategy" value={strategy} options={STRATEGIES} onChange={setStrategy} disabled={!image} />
+        <Segmented label="Colour style" value={strategy} options={STRATEGIES} onChange={setStrategy} disabled={!image} />
+        <p className="text-[12px] text-ink-subtle">{STRATEGIES.find((s) => s.id === strategy)?.title}</p>
         <Slider label="Colours to extract" min={5} max={10} value={k} defaultValue={8} onChange={setK} />
         {!image && swatches.length > 0 && <p className="text-[12px] text-ink-subtle">Palette restored from a link. Add a wallpaper to re-extract.</p>}
       </div>

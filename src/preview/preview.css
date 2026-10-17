@@ -52,6 +52,25 @@
   filter: blur(var(--blur));
   transition: filter 200ms ease-out;
 }
+/* Four soft blobs of the palette over the page colour, drifting slowly. Blur still softens it. */
+.pv-mesh {
+  position: absolute;
+  inset: -25%;
+  background:
+    radial-gradient(30% 35% at 25% 30%, var(--primary) 0%, transparent 100%),
+    radial-gradient(28% 32% at 75% 25%, var(--accent) 0%, transparent 100%),
+    radial-gradient(32% 36% at 70% 75%, var(--secondary) 0%, transparent 100%),
+    radial-gradient(26% 30% at 30% 75%, color-mix(in oklab, var(--primary) 50%, var(--accent)) 0%, transparent 100%),
+    var(--bg);
+  filter: blur(var(--blur));
+  animation: pv-mesh-drift 24s ease-in-out infinite alternate;
+}
+@keyframes pv-mesh-drift {
+  to { transform: rotate(14deg) scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pv-mesh { animation: none; }
+}
 .pv-overlay {
   position: absolute;
   inset: 0;

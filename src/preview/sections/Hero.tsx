@@ -19,7 +19,7 @@ export function AvatarStack({ names = ['AK', 'RM', 'JS', 'TP'] }: { names?: stri
   )
 }
 
-/** The wallpaper band: makes the blur and overlay sliders visible in every preset. */
+/** A mesh of the palette behind the event card (Glass shows the real wallpaper behind the whole page instead). */
 function WallpaperBand({ glass }: { glass: boolean }) {
   const [going, setGoing] = useState(false)
   const rsvps = going ? 129 : 128
@@ -27,7 +27,7 @@ function WallpaperBand({ glass }: { glass: boolean }) {
     <div className="relative h-72 overflow-hidden @xl:h-80" style={{ borderRadius: 'calc(var(--radius) * 1.4)' }}>
       {!glass && (
         <div aria-hidden className="pv-layer">
-          <div className="pv-wallpaper" />
+          <div className="pv-mesh" />
           <div className="pv-overlay" />
         </div>
       )}

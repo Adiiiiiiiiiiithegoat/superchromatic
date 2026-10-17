@@ -162,20 +162,20 @@ export function generateTheme(palette: RoleColors, preset: Preset, adj: Adjustme
     return { id, label, fg: toHex(fg), bg: rgbToHex(worst.bg), ratio: worst.ratio, target, pass: worst.ratio >= target, fixed: wasFixed }
   }
   const checks: ContrastCheck[] = [
-    row('text-bg', 'Text on background', text, page, TEXT_TARGET, fixed.has('text') || overlayRaised),
-    row('muted-bg', 'Muted text on background', textMuted, page, TEXT_TARGET, fixed.has('muted') || overlayRaised),
-    row('text-card', 'Text on card', text, onCard, TEXT_TARGET, fixed.has('text') || cardRaised),
-    row('muted-card', 'Muted text on card', textMuted, onCard, TEXT_TARGET, fixed.has('muted') || cardRaised),
-    row('primary', 'Primary button', primaryText, [rendered(primary)], TEXT_TARGET, fixed.has('primary')),
-    row('secondary', 'Secondary button', secondaryText, [rendered(secondary)], TEXT_TARGET, fixed.has('secondary')),
-    row('accent', 'Accent fill', accentText, [rendered(accent)], TEXT_TARGET, fixed.has('accent')),
-    row('badge', 'Badge', badgeText, [rendered(badgeBg)], TEXT_TARGET, fixed.has('badge')),
-    row('input-text', 'Input text', text, onInput, TEXT_TARGET, fixed.has('text') || inputRaised),
-    row('error', 'Error / danger text', danger, statusBgs(danger), TEXT_TARGET, fixed.has('danger')),
-    row('success', 'Success status', success, statusBgs(success), TEXT_TARGET, fixed.has('success')),
-    row('warning', 'Warning status', warning, statusBgs(warning), TEXT_TARGET, fixed.has('warning')),
-    row('input-border', 'Input border', inputBorder, onInput, UI_TARGET, fixed.has('inputBorder')),
-    row('ring', 'Focus ring', ring, page, UI_TARGET, fixed.has('ring')),
+    row('text-bg', 'Main text on the page', text, page, TEXT_TARGET, fixed.has('text') || overlayRaised),
+    row('muted-bg', 'Lighter text on the page', textMuted, page, TEXT_TARGET, fixed.has('muted') || overlayRaised),
+    row('text-card', 'Main text on cards', text, onCard, TEXT_TARGET, fixed.has('text') || cardRaised),
+    row('muted-card', 'Lighter text on cards', textMuted, onCard, TEXT_TARGET, fixed.has('muted') || cardRaised),
+    row('primary', 'Main button', primaryText, [rendered(primary)], TEXT_TARGET, fixed.has('primary')),
+    row('secondary', 'Second button', secondaryText, [rendered(secondary)], TEXT_TARGET, fixed.has('secondary')),
+    row('accent', 'Accent colour', accentText, [rendered(accent)], TEXT_TARGET, fixed.has('accent')),
+    row('badge', 'Little tags (badges)', badgeText, [rendered(badgeBg)], TEXT_TARGET, fixed.has('badge')),
+    row('input-text', 'Typing in text boxes', text, onInput, TEXT_TARGET, fixed.has('text') || inputRaised),
+    row('error', 'Error messages', danger, statusBgs(danger), TEXT_TARGET, fixed.has('danger')),
+    row('success', 'Success messages', success, statusBgs(success), TEXT_TARGET, fixed.has('success')),
+    row('warning', 'Warning messages', warning, statusBgs(warning), TEXT_TARGET, fixed.has('warning')),
+    row('input-border', 'Text box outlines', inputBorder, onInput, UI_TARGET, fixed.has('inputBorder')),
+    row('ring', 'Keyboard focus outline', ring, page, UI_TARGET, fixed.has('ring')),
   ]
 
   // ── 6. Effects ──────────────────────────────────────────────────────────────

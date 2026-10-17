@@ -25,8 +25,8 @@ You can drop your own image, browse for one, or just paste it. It takes PNG, JPG
 [Hover the swatches]
 These are the extracted colours, with their hex codes and a bar for how much of the image each one covers. [Click two swatches off] Clicking a swatch toggles whether it's used in the theme, and the roles update straight away.
 
-[Switch K-means → Median cut → Vibrant]
-There are three extraction strategies. K-means is the default. Median cut splits the colour space. Vibrant hunts for small pops of colour, which is great for photos.
+[Switch Natural → Varied → Vibrant]
+There are three colour styles. Natural is the default: under the hood it's k-means. Varied is median cut, which splits the colour space so quieter colours get a look in. Vibrant hunts for small pops of colour, which is great for photos.
 
 [Hover the image, show the loupe, click]
 And this is the eyedropper. Hover to get a magnifier, click to add that exact colour. It works with the keyboard too.
@@ -41,11 +41,11 @@ There are eight presets, and each one is a set of rules, not a fixed palette. Mi
 
 **Sliders**
 [Glass preset; drag Saturation, Brightness, Contrast, then Blur and Overlay]
-These are the adjustments: saturation, brightness and contrast, then background blur and overlay opacity, which you can really see on Glass. [Switch to Minimal, drag Blur] They matter in every preset, because there's always a wallpaper band behind the hero card. [Double-click a slider] Double-click resets one.
+These are the adjustments: saturation, brightness and contrast, then background blur and overlay opacity, which you can really see on Glass. [Switch to Minimal, drag Blur] They matter in every preset, because there's always a mesh gradient of the palette behind the hero card. [Double-click a slider] Double-click resets one.
 
 **Accessibility auto-fix**
 [Open the Accessibility section; drag Contrast to 0]
-Here's the part I'm proudest of. I just crushed the contrast, but the top-bar chip still says every pair passes. That's because auto-fix nudges the lightness of any failing colour until it meets WCAG AA, keeping its hue and chroma. [Turn auto-fix off] If I switch it off, you can see the real failures in red. [Turn it back on] The wrench icons show which pairs were adjusted.
+Here's the part I'm proudest of. I just crushed the contrast, but the chip on the Accessibility section still says every text is readable. That's because auto-fix nudges the lightness of any failing colour until it meets WCAG AA, keeping its hue and chroma. [Turn auto-fix off] If I switch it off, you can see the real failures in red. [Turn it back on] The wrench icons show which pairs were adjusted.
 
 **Mobile**
 [DevTools device mode at 390px, or a phone]

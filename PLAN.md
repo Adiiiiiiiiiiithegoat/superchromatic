@@ -44,3 +44,11 @@
 - [x] Playwright reload / pruning / fallback tests
 - [x] README + NOTES updated
 - [x] Production deploy + live smoke test
+
+## Plain-language polish
+- [x] Hero card on a palette mesh gradient instead of blurred wallpaper
+- [x] Strategy names in plain words (Natural / Varied / Vibrant)
+- [x] Kid-friendly accessibility copy (Great / Good / Hard to read + glossary)
+- [x] Move readability chip from top bar to Accessibility header
+- [x] Drop app-only --wallpaper-fallback from exports
+- [x] Deploy + live smoke test

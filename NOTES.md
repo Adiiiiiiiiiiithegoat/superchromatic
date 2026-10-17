@@ -21,7 +21,7 @@
 | Responsive (desktop / drawer / bottom sheet) | ✅ | `src/App.tsx` (`Drawer`), `BottomSheet.tsx`, container queries in the preview |
 | Bonus: multiple strategies | ✅ | `kmeans.ts`, `medianCut.ts`, `vibrant.ts` |
 | Bonus: pick colours from the image | ✅ | `ImageInspector` in `UploadZone.tsx` (5×5 average, loupe, keyboard) |
-| Bonus: accessibility-aware colours | ✅ | `src/lib/a11y/contrast.ts`, auto-fix in `generate.ts`, `ContrastReport.tsx`, top-bar chip |
+| Bonus: accessibility-aware colours | ✅ | `src/lib/a11y/contrast.ts`, auto-fix in `generate.ts`, `ContrastReport.tsx`, chip in the Accessibility section header |
 | Bonus: transitions & micro-animations | ✅ | `@property` in `src/index.css`, root transition in `Preview.tsx`, Motion in Palette/RoleSlots/PresetPicker/TopBar/BottomSheet |
 | Export (CSS / JSON / Tailwind v4, copy + download) | ✅ | `src/lib/share/export.ts`, `ExportModal.tsx` |
 | Share URL + localStorage persistence | ✅ | `src/lib/share/url.ts`, `persist` in the store |
@@ -48,5 +48,6 @@
 - "Compare" shows the theme from before the latest burst of changes (a theme counts as settled after 700ms of no changes).
 - Sample wallpapers: procedurally built SVGs (seeded RNG for stars/buildings/bubbles/bokeh) rasterised to JPEG with headless Chromium, because `createImageBitmap` can't decode SVG blobs inside a worker, and uploads only accept PNG/JPG/WebP.
 - **Upload persistence (17 Oct 2026):** uploads go to IndexedDB (original Blob + id, name, upload time, extracted palette), newest 5 kept. localStorage stores the upload's id with an empty `src`, because the old blob: URL is dead after a reload. On load, `openUpload(id, keepPalette)` reads the Blob back and makes a new object URL without re-extracting. If the record is missing or IndexedDB is unavailable, the first sample loads instead. The palette saved with an upload is refreshed after every successful extraction (including a strategy or k change), so "Recent uploads" restores the latest extraction. Picked or custom colours stay in the session only. Thumbnails use their own object URLs, separate from the main image's, so removing a recent item never breaks the wallpaper on screen. Removing the upload that's currently showing leaves it on screen, but it won't come back after a reload.
+- **Plain-language pass (17 Oct 2026):** strategies are labelled Natural / Varied / Vibrant (internal ids unchanged). Contrast rows use everyday names, and badges read Great (AAA) / Good (AA) / Hard to read, with a short glossary under the list. The summary chip moved from the top bar into the Accessibility section header (in the mobile sheet too). The hero card sits on a palette mesh gradient (`.pv-mesh`, built only from tokens) instead of a blurred copy of the wallpaper. Exports leave out `--wallpaper-fallback`, which only matters inside this app.
 - Preview `color-scheme` follows the theme mode, so native radios/checkboxes/selects match the theme instead of the dark app chrome (caught in screenshot review).
 - Screenshot review fixes: Export button label was invisible (class conflict); contrast rows wrapped onto 3 lines.

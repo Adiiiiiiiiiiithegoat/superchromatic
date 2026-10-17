@@ -91,9 +91,12 @@ export function BottomSheet() {
         className="overflow-y-auto overscroll-contain border-t border-line px-4 pt-3 pb-8"
         style={{ height: Math.max(0, heights[snap] - HEADER) }}
       >
-        {SECTIONS.filter((s) => s.tab === tab).map(({ id, title, Component }) => (
+        {SECTIONS.filter((s) => s.tab === tab).map(({ id, title, Component, Aside }) => (
           <div key={id} className="mb-6">
-            <h2 className="mb-2 text-[13px] font-semibold">{title}</h2>
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <h2 className="text-[13px] font-semibold">{title}</h2>
+              {Aside && <Aside />}
+            </div>
             <Component />
           </div>
         ))}

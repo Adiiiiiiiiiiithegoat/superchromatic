@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { copyText, toCss } from '../lib/share/export'
 import { shareUrl } from '../lib/share/url'
 import { useTheme, useThemeStore } from '../store/useThemeStore'
-import { A11yChip } from './controls/ContrastReport'
 import { ExportModal } from './controls/ExportModal'
 import { btn, iconBtn } from './ui'
 
@@ -63,7 +62,6 @@ export function TopBar({ onToggleControls, controlsOpen }: { onToggleControls?: 
         <span className="hidden truncate text-[12.5px] text-ink-subtle xl:inline">Drop a wallpaper. Get a whole design system.</span>
       </div>
       <div className="ml-auto flex items-center gap-1.5">
-        <A11yChip />
         <button type="button" className={btn} onClick={share} aria-label="Copy share link">
           <Link2 aria-hidden className="size-3.5" /> <span className="max-md:hidden">Share</span>
         </button>
