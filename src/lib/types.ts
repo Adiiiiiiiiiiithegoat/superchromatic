@@ -1,6 +1,6 @@
 import type { Oklch } from './theme/oklch'
 
-export type Strategy = 'kmeans' | 'median' | 'vibrant'
+export type Strategy = 'kmeans' | 'median' | 'vibrant' | 'rainbow' | 'matching' | 'soft'
 export type SwatchSource = Strategy | 'picked' | 'custom'
 
 export interface Swatch {

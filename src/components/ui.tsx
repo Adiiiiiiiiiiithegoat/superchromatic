@@ -15,7 +15,7 @@ export function Segmented<T extends string>({ label, value, options, onChange, d
   disabled?: boolean
 }) {
   return (
-    <div role="group" aria-label={label} className="grid grid-flow-col auto-cols-fr gap-0.5 rounded-lg border border-line bg-raised p-0.5">
+    <div role="group" aria-label={label} className="grid grid-cols-3 gap-0.5 rounded-lg border border-line bg-raised p-0.5">
       {options.map((o) => (
         <button
           key={o.id}

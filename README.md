@@ -22,7 +22,7 @@
 - ✅ **Responsive**: side-by-side panes at ≥1024px; a resizable left drawer from 640 to 1023px; under 640px the preview fills the screen and the controls live in a draggable bottom sheet (peek, half or full) with 44px touch targets. There is no horizontal scroll at any width (tested at 390, 768, 1024 and 1440px).
 
 **Bonuses**
-- ✅ **Multiple extraction strategies**: K-means (default), Median cut and Vibrant, shown in the UI in plain words as **Natural**, **Varied** and **Vibrant** with a one-line explanation each. Plus an **eyedropper** on the image. It averages 5×5 pixels, shows a magnifier loupe on hover, and is keyboard-operable (arrow keys + Enter).
+- ✅ **Multiple extraction strategies**: Six colour styles: K-means, Median cut and Vibrant (shown as **Natural**, **Varied** and **Vibrant**) plus **Rainbow**, **Matching** and **Soft**, each with a one-line plain-words explanation. No colour family covering 3% or more of the picture can go missing. Plus an **eyedropper** on the image. It averages 5×5 pixels, shows a magnifier loupe on hover, and is keyboard-operable (arrow keys + Enter).
 - ✅ **Accessibility-aware colours**: a WCAG 2.x contrast engine with auto-fix (on by default) and a 14-pair report written for non-experts ("Main text on the page", "Great"/"Good"/"Hard to read", a short glossary of contrast, AA and AAA) with "fixed" markers. The Accessibility section header shows e.g. "✓ 14/14 readable". Glass surfaces are checked against the worst case behind them.
 - ✅ **Smooth transitions & micro-animations**: colour tokens are registered with `@property`, so the whole theme interpolates. Swatches stagger in and spring when selected. Role chips glide between slots (shared layout), the preset outline slides from card to card, slider thumbs grow while dragged, a scan line sweeps the image during extraction, and "Copy CSS" gives a sparkle burst. All of it switches off under `prefers-reduced-motion`.
 
@@ -76,9 +76,17 @@ flowchart LR
 
 **Pipeline** (inside a Web Worker, so the UI never blocks): `createImageBitmap` → draw onto an `OffscreenCanvas` with the longest side at 200px (≤ 40k pixels, which is plenty for a palette) → skip pixels with alpha < 125 → convert each pixel to OKLab with a precomputed sRGB-linearisation table and Ottosson's matrices.
 
-1. **K-means (default).** k-means++ seeding with a seeded PRNG (mulberry32), so the same image always gives the same palette. Lloyd iterations (max 20 or until no pixel changes cluster). Clusters closer than ΔE_ok 0.04 are merged (they'd read as one colour), and results are sorted by population. k is adjustable from 5 to 10.
-2. **Median cut.** Start with one box of all pixels. Repeatedly pick the box whose widest OKLab channel is widest overall, sort it along that channel and split at the median until there are k boxes. Each box's mean is a colour.
-3. **Vibrant.** Bucket pixels by hue (12 × 30°) × lightness band (dark/mid/light), with greys in their own buckets. Score each colourful bucket by `chroma × √population`, so a small but vivid accent can beat a large dull area. Greedily keep the best buckets that are ≥ 0.08 apart, and always keep the dominant colour as an anchor for the background.
+1. **K-means (default, "Natural").** k-means++ seeding with a seeded PRNG (mulberry32), so the same image always gives the same palette. Lloyd iterations (max 20 or until no pixel changes cluster). Clusters closer than ΔE_ok 0.04 are merged (they'd read as one colour), and results are sorted by population. k is adjustable from 5 to 10.
+2. **Median cut ("Varied").** Start with one box of all pixels. Repeatedly pick the box whose widest OKLab channel is widest overall, sort it along that channel and split at the median until there are k boxes. Each box's mean is a colour.
+3. **Vibrant ("Vibrant").** Bucket pixels by hue (12 × 30°) × lightness band (dark/mid/light), with greys in their own buckets. Score each colourful bucket by `chroma × √population`, so a small but vivid accent can beat a large dull area. Greedily keep the best buckets that are ≥ 0.08 apart, and always keep the dominant colour as an anchor for the background.
+
+Three more "mood" strategies (`src/lib/extract/moods.ts`) change *which* colours are picked, so the finished website really looks different:
+
+- **Rainbow**: every colourful pixel goes into one of 12 hue families. Each family is represented by its chroma²-weighted OKLab mean, which leans towards its vivid pixels. Families are then taken in farthest-point order round the hue wheel.
+- **Matching**: finds the main family (count × chroma), keeps only pixels within ±45° of it and runs k-means on those. The result is light-to-dark shades that always go together.
+- **Soft**: keeps the less colourful half of the colourful pixels (chroma between 0.015 and the median) and runs k-means on them, giving the quiet, dusty colours.
+
+**No missing colour families.** After Natural, Varied and Vibrant run, any hue family (12 slices of 30°) that covers at least 3% of the picture but has no swatch gets one. It replaces the most redundant swatch, the one closest to another. Without this, a dark navy that sits close to black in OKLab could be folded into the blacks (a dark blue F1 car came out with no blue at all). `ensureHues()` in `src/lib/extract/moods.ts`.
 
 **Eyedropper.** The image is copied once into a ≤1024px canvas; a click averages a 5×5 block in OKLab (the same maths as extraction) and adds it as a `picked` swatch. Hovering shows a 6× loupe drawn with CSS `background-position`, with no extra canvas.
 
@@ -117,7 +125,7 @@ The controls avoid design and maths jargon so anyone, kids included, can use the
 |---|---|
 | Wallpaper / Palette / Roles / Preset / Adjustments / Accessibility | Picture / Colours / Where each colour goes / Style / Fine-tune / Easy to read |
 | Primary / Secondary / Accent / Background | Main / Second / Highlight / Background |
-| K-means / Median cut / Vibrant | Natural / Varied / Vibrant |
+| K-means / Median cut / Vibrant / hue spread / one hue family / low chroma | Natural / Varied / Vibrant / Rainbow / Matching / Soft |
 | Saturation / Overlay opacity / Corner radius | Colour strength / Background tint / Corner roundness |
 | AAA / AA / Fail | Great / Good / Hard to read (with a short glossary) |
 | Export | Save (each format says where it's used) |

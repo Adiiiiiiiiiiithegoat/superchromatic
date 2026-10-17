@@ -25,8 +25,8 @@ You can drop your own image, browse for one, or just paste it. It takes PNG, JPG
 [Hover the swatches]
 These are the extracted colours, with their hex codes and a bar for how much of the image each one covers. [Click two swatches off] Clicking a swatch toggles whether it's used in the theme, and the roles update straight away.
 
-[Switch Natural → Varied → Vibrant]
-There are three colour styles. Natural is the default: under the hood it's k-means. Varied is median cut, which splits the colour space so quieter colours get a look in. Vibrant hunts for small pops of colour, which is great for photos.
+[Switch Natural → Varied → Vibrant → Rainbow → Matching → Soft]
+There are six colour styles. Natural is the default: under the hood it's k-means. Varied is median cut, which splits the colour space so quieter colours get a look in. Vibrant hunts for small pops of colour, which is great for photos. Rainbow takes one colour from every colour family, Matching sticks to shades of the main colour, and Soft picks the quiet, dusty ones. And no colour family that covers a real part of the picture can go missing.
 
 [Hover the image, show the loupe, click]
 And this is the eyedropper. Hover to get a magnifier, click to add that exact colour. It works with the keyboard too.

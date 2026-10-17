@@ -61,3 +61,8 @@
 ## Tooltips
 - [x] Styled app-wide tooltip replacing native title boxes
 - [x] Deploy + live smoke test
+
+## Colour styles
+- [x] Guarantee every sizeable colour family a swatch (blue fix)
+- [x] Rainbow, Matching and Soft styles + tests
+- [x] Deploy + live smoke test

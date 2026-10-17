@@ -3,6 +3,7 @@ import { kmeans, mulberry32 } from '../src/lib/extract/kmeans'
 import { medianCut } from '../src/lib/extract/medianCut'
 import { rgbaToOklab } from '../src/lib/extract/pixels'
 import { vibrant } from '../src/lib/extract/vibrant'
+import { ensureHues, matching, rainbow, soft } from '../src/lib/extract/moods'
 
 /** A synthetic "photo": random noisy pixels around a few base colours. */
 function noisyImage(n = 4000, seed = 7): Uint8ClampedArray {
@@ -64,5 +65,52 @@ describe('vibrant', () => {
     const out = vibrant(rgbaToOklab(noisyImage()), 6)
     expect(out.length).toBeGreaterThan(1)
     expect(out.length).toBeLessThanOrEqual(6)
+  })
+})
+
+/** Like a dark F1 car photo: mostly near-black, a navy body, red and yellow livery, white text. */
+function carImage(n = 6000, seed = 3): Uint8ClampedArray {
+  const rand = mulberry32(seed)
+  const bases: [number, number[]][] = [[0.44, [16, 16, 22]], [0.2, [15, 24, 55]], [0.16, [205, 25, 35]], [0.06, [240, 200, 25]], [0.06, [235, 235, 235]], [0.08, [90, 20, 25]]]
+  const data = new Uint8ClampedArray(n * 4)
+  for (let i = 0; i < n; i++) {
+    let r = rand()
+    const base = bases.find(([share]) => (r -= share) < 0)?.[1] ?? bases[0][1]
+    const shade = 0.6 + rand() * 0.8 // light and shadow across the bodywork
+    for (let ch = 0; ch < 3; ch++) data[i * 4 + ch] = base[ch] * shade + (rand() - 0.5) * 16
+    data[i * 4 + 3] = 255
+  }
+  return data
+}
+const hue = (c: { a: number; b: number }) => ((Math.atan2(c.b, c.a) * 180) / Math.PI + 360) % 360
+const isBlue = (c: { a: number; b: number }) => Math.hypot(c.a, c.b) >= 0.04 && hue(c) > 230 && hue(c) < 300
+
+describe('colour families', () => {
+  const px = rgbaToOklab(carImage())
+  it('reproduces the bug: median cut alone loses the navy', () => {
+    expect(medianCut(px, 7).some(isBlue)).toBe(false)
+  })
+  it('a navy that covers a fifth of the picture always gets a swatch', () => {
+    for (const [name, run] of [['kmeans', kmeans], ['median', medianCut], ['vibrant', vibrant]] as const) {
+      for (const k of [5, 7, 10]) expect(ensureHues(px, run(px, k), k).some(isBlue), `${name} k=${k}`).toBe(true)
+    }
+  })
+  it('keeps the palette at k colours', () => {
+    expect(ensureHues(px, kmeans(px, 5), 5).length).toBeLessThanOrEqual(5)
+  })
+  it('rainbow spreads across every family present', () => {
+    const out = rainbow(px, 8)
+    expect(out.some(isBlue)).toBe(true)
+    const hues = out.filter((c) => Math.hypot(c.a, c.b) >= 0.04).map(hue)
+    expect(new Set(hues.map((h) => Math.floor(h / 30))).size).toBeGreaterThanOrEqual(3)
+  })
+  it('matching stays within one colour family', () => {
+    const out = matching(px, 8)
+    const main = hue(out.reduce((a, c) => (Math.hypot(c.a, c.b) > Math.hypot(a.a, a.b) ? c : a)))
+    for (const c of out) expect(Math.abs(((hue(c) - main + 540) % 360) - 180)).toBeLessThanOrEqual(50)
+  })
+  it('soft is calmer than vibrant', () => {
+    const avg = (cs: { a: number; b: number }[]) => cs.reduce((s, c) => s + Math.hypot(c.a, c.b), 0) / cs.length
+    expect(avg(soft(px, 8))).toBeLessThan(avg(vibrant(px, 8)) * 0.7)
   })
 })

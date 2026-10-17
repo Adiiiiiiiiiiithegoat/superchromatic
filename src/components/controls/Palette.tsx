@@ -9,10 +9,13 @@ import { Slider } from './Slider'
 export const ROLE_LABEL: Record<Role, string> = { primary: 'Main', secondary: 'Second', accent: 'Highlight', background: 'Background' }
 
 const STRATEGIES: { id: Strategy; label: string; title: string }[] = [
-  // Plain-word names for k-means, median cut and the vibrant picker.
+  // Plain-word names for k-means, median cut, vibrant and the three mood pickers in moods.ts.
   { id: 'kmeans', label: 'Natural', title: 'The colours you notice first, in the amounts they appear in the picture.' },
   { id: 'median', label: 'Varied', title: 'A wider mix that also picks up the quieter colours hiding in the picture.' },
   { id: 'vibrant', label: 'Vibrant', title: 'The boldest, brightest pops of colour, even tiny ones.' },
+  { id: 'rainbow', label: 'Rainbow', title: 'One colour from every colour family in the picture, as different from each other as possible.' },
+  { id: 'matching', label: 'Matching', title: 'Light and dark shades of the picture’s main colour, so everything goes together.' },
+  { id: 'soft', label: 'Soft', title: 'The quiet, dusty, gentle colours in the picture.' },
 ]
 
 export function PaletteSection() {
