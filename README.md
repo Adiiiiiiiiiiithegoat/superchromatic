@@ -2,7 +2,7 @@
 
 **Drop a wallpaper. Get a whole design system.** SuperChromatic extracts a palette from any image, turns it into a complete, accessible theme (about 40 design tokens), and restyles a realistic product site live while you tweak it.
 
-**Live demo:** _LIVE_URL_ · **Repo:** _REPO_URL_
+**Live demo:** https://superchromatic.vercel.app · **Repo:** https://github.com/Adiiiiiiiiiiithegoat/superchromatic
 
 ![Glass preset on the Sunset dunes sample](screenshots/glass-desktop.png)
 

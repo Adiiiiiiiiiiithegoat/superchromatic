@@ -1,37 +1,37 @@
 # SuperChromatic — Plan
 
 ## Setup
-- [ ] Scaffold Vite + React + TS + Tailwind v4 by hand
-- [ ] Install deps (culori, zustand, motion, lucide-react, vitest, playwright)
+- [x] Scaffold Vite + React + TS + Tailwind v4 by hand
+- [x] Install deps (culori, zustand, motion, lucide-react, vitest, playwright)
 
 ## Extraction
-- [ ] Pixel decode + OKLab conversion in worker
-- [ ] K-means (seeded k-means++, merge ΔE 0.04)
-- [ ] Median cut
-- [ ] Vibrant hue buckets
-- [ ] Eyedropper with loupe
-- [ ] Extraction unit tests
+- [x] Pixel decode + OKLab conversion in worker
+- [x] K-means (seeded k-means++, merge ΔE 0.04)
+- [x] Median cut
+- [x] Vibrant hue buckets
+- [x] Eyedropper with loupe
+- [x] Extraction unit tests
 
 ## Theme engine
-- [ ] Role auto-assignment + hue-rotation fallback
-- [ ] 8 presets as rule sets
-- [ ] generateTheme with adjustments + gamut mapping
-- [ ] Contrast maths + auto-fix + tests
+- [x] Role auto-assignment + hue-rotation fallback
+- [x] 8 presets as rule sets
+- [x] generateTheme with adjustments + gamut mapping
+- [x] Contrast maths + auto-fix + tests
 
 ## UI
-- [ ] Store + persistence + share URL
-- [ ] Controls panel (wallpaper, palette, roles, preset, adjust, a11y)
-- [ ] Live preview "Orbit" site, all sections
-- [ ] Preview toolbar (frames, mode, compare)
-- [ ] Export modal (CSS, JSON, Tailwind)
-- [ ] Responsive: drawer + mobile bottom sheet
-- [ ] Animations + reduced motion
-- [ ] 5 original sample wallpapers
+- [x] Store + persistence + share URL
+- [x] Controls panel (wallpaper, palette, roles, preset, adjust, a11y)
+- [x] Live preview "Orbit" site, all sections
+- [x] Preview toolbar (frames, mode, compare)
+- [x] Export modal (CSS, JSON, Tailwind)
+- [x] Responsive: drawer + mobile bottom sheet
+- [x] Animations + reduced motion
+- [x] 5 original sample wallpapers
 
 ## Verify & ship
-- [ ] typecheck, test, build pass
-- [ ] Playwright smoke test + screenshots
-- [ ] README + docs/VIDEO_SCRIPT.md
-- [ ] GitHub repo pushed
-- [ ] Vercel production deploy
-- [ ] Final report in NOTES.md
+- [x] typecheck, test, build pass
+- [x] Playwright smoke test + screenshots
+- [x] README + docs/VIDEO_SCRIPT.md
+- [x] GitHub repo pushed
+- [x] Vercel production deploy
+- [x] Final report in NOTES.md

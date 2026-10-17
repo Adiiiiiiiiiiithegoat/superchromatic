@@ -9,3 +9,6 @@ Thumbs.db
 test-results/
 playwright-report/
 screenshots/tmp/
+
+.vercel
+.env*
