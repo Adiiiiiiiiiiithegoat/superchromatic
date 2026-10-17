@@ -173,3 +173,35 @@ test('preview links and buttons go somewhere', async ({ page }) => {
   await expect(page.getByText('isn’t a real page')).toBeVisible()
   expect(page.url()).not.toContain('#')
 })
+
+test('dark by default, and existing light sessions switch once', async ({ page }) => {
+  await ready(page)
+  const scheme = () => page.getByTestId('preview-root').evaluate((el) => (el as HTMLElement).style.colorScheme)
+  expect(await scheme()).toBe('dark')
+  // A session saved before dark became the default (persist version 0) comes back dark.
+  await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem('superchromatic:v1')!)
+    localStorage.setItem('superchromatic:v1', JSON.stringify({ state: { ...saved.state, mode: 'light' }, version: 0 }))
+  })
+  await page.reload()
+  await expect.poll(scheme).toBe('dark')
+  // After that, the user's choice sticks.
+  await page.getByTestId('mode-toggle').click()
+  await page.reload()
+  await expect.poll(scheme).toBe('light')
+})
+
+test('a held slider makes the preview follow it without fades', async ({ page }) => {
+  await ready(page)
+  const root = page.getByTestId('preview-root')
+  const box = (await page.getByTestId('slider-saturation').boundingBox())!
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width / 3, box.y + box.height / 2)
+  await expect(root).toHaveAttribute('data-instant', 'true')
+  await page.mouse.up()
+  await expect(root).not.toHaveAttribute('data-instant')
+  // A single change (a style click) still fades.
+  await page.getByTestId('preset-vibrant').click()
+  expect(await root.evaluate((el) => getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.35s')
+})

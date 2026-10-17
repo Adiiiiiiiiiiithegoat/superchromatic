@@ -16,9 +16,27 @@
   transition-duration: 350ms;
   transition-timing-function: ease-out;
 }
+/*
+ * Colours animate once, on the root's registered tokens, and every element inherits the in-between
+ * values. Giving every element its own colour transition as well made each of them restart a
+ * transition on every frame of the root's animation: 4× the style work for no visible gain.
+ * Only things with their own hover/pressed colours keep colour transitions.
+ */
 .pv-root :where(*) {
-  transition: background-color 350ms ease-out, color 350ms ease-out, border-color 350ms ease-out, box-shadow 350ms ease-out,
-    outline-color 350ms ease-out, opacity 200ms ease-out, transform 200ms ease-out;
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+.pv-root :where(.pv-btn, .pv-chip, .pv-input, .pv-switch, .pv-tab, .pv-link, .pv-table tr) {
+  transition: background-color 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out, box-shadow 350ms ease-out,
+    opacity 200ms ease-out, transform 200ms ease-out;
+}
+/* Shadows are plain strings, not animatable tokens, so cards fade them themselves. */
+.pv-root :where(.pv-card) {
+  transition: box-shadow 350ms ease-out, opacity 200ms ease-out, transform 200ms ease-out;
+}
+/* During a slider drag the slider already moves smoothly; the preview follows it directly. */
+.pv-root[data-instant],
+.pv-root[data-instant] * {
+  transition-duration: 0s !important;
 }
 .pv-root :where(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: 2px solid var(--ring);

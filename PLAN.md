@@ -75,3 +75,9 @@
 ## Brand mark
 - [x] Flat 2×2 swatch favicon + matching live top-bar mark
 - [x] Deploy + live smoke test
+
+## Performance & defaults
+- [x] Measure lag (style recalc dominated)
+- [x] Single colour animation, follow-the-drag mode, theme computed once
+- [x] Dark mode by default (+ one-time migration)
+- [x] Deploy + live smoke test

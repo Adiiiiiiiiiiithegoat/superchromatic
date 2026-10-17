@@ -9,7 +9,7 @@ import { PRESETS_BY_ID, type PresetId } from '../lib/theme/presets'
 import { resolveRoles } from '../lib/theme/roles'
 import type { ShareState } from '../lib/share/url'
 import { deleteUpload, getUpload, listUploads, saveUpload } from '../lib/storage/imageStore'
-import { ROLES, type A11yOptions, type Adjustments, type Mode, type Role, type RoleOverrides, type Strategy, type Swatch, type SwatchSource } from '../lib/types'
+import { ROLES, type A11yOptions, type Adjustments, type Mode, type Role, type RoleColors, type RoleOverrides, type Strategy, type Swatch, type SwatchSource } from '../lib/types'
 
 export interface ImageRef {
   src: string
@@ -96,7 +96,7 @@ export const useThemeStore = create<ThemeState>()(
       overrides: {},
       presetId: 'minimal',
       adjustments: PRESETS_BY_ID.minimal.defaults,
-      mode: 'light',
+      mode: 'dark',
       a11y: { autoFix: true },
       hintDismissed: false,
       toast: null,
@@ -245,6 +245,9 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'superchromatic:v1',
+      // v1: dark became the default; existing sessions switch to it once, then the toggle is remembered again.
+      version: 1,
+      migrate: (saved, version) => (version < 1 ? { ...(saved as object), mode: 'dark' } : saved) as ThemeState,
       storage: createJSONStorage(() => safeStorage),
       // An upload's blob: URL dies with the tab; its bytes live in IndexedDB and get a fresh URL on load.
       partialize: (s) => ({
@@ -264,11 +267,29 @@ export const useThemeStore = create<ThemeState>()(
   ),
 )
 
+/**
+ * Remember the last call. Every component asking with the same inputs gets the same object back,
+ * so one change computes roles and the theme once instead of once per component (~14 before).
+ */
+function memoLast<A extends unknown[], R>(fn: (...args: A) => R): (...args: A) => R {
+  let lastArgs: A | null = null
+  let last: R
+  return (...args) => {
+    if (lastArgs?.every((a, i) => a === args[i])) return last
+    lastArgs = args
+    return (last = fn(...args))
+  }
+}
+const resolveRolesOnce = memoLast(resolveRoles)
+const generateThemeOnce = memoLast((colors: RoleColors, presetId: PresetId, adjustments: Adjustments, mode: Mode, a11y: A11yOptions) =>
+  generateTheme(colors, PRESETS_BY_ID[presetId], adjustments, mode, a11y),
+)
+
 export function useRoles() {
   const swatches = useThemeStore((s) => s.swatches)
   const selected = useThemeStore((s) => s.selected)
   const overrides = useThemeStore((s) => s.overrides)
-  return useMemo(() => resolveRoles(swatches, selected, overrides), [swatches, selected, overrides])
+  return useMemo(() => resolveRolesOnce(swatches, selected, overrides), [swatches, selected, overrides])
 }
 
 /** The live theme: roles → generateTheme → CSS variables. */
@@ -278,7 +299,7 @@ export function useTheme() {
   const adjustments = useThemeStore((s) => s.adjustments)
   const mode = useThemeStore((s) => s.mode)
   const a11y = useThemeStore((s) => s.a11y)
-  return useMemo(() => generateTheme(colors, PRESETS_BY_ID[presetId], adjustments, mode, a11y), [colors, presetId, adjustments, mode, a11y])
+  return useMemo(() => generateThemeOnce(colors, presetId, adjustments, mode, a11y), [colors, presetId, adjustments, mode, a11y])
 }
 
 /** CSS value for the wallpaper layer: the image, or a palette gradient when there is none (shared links). */

@@ -144,7 +144,7 @@ The controls avoid design and maths jargon so anyone, kids included, can use the
 - **Fonts per preset**: Inter (Minimal: neutral), Space Grotesk (Vibrant: punchy), Fraunces (Warm: soft serif), Manrope (Cool: engineered), Sora (Glass: airy geometric), Unbounded + JetBrains Mono (Neon: loud display + techy labels), DM Sans (Pastel: friendly), IBM Plex Sans (Monochrome: sober).
 - **Palette mesh**: every non-Glass preset puts a slowly drifting mesh gradient of the palette (primary, accent, secondary and a blend, over the page colour) behind the hero's event card, instead of a blurred copy of the wallpaper. Blur and overlay still apply to it, and the drift stops under reduced motion. Glass shows the real wallpaper behind the whole page.
 - **Mobile bottom sheet** with tabs instead of a long scrolling panel, so the preview stays visible while you tweak it.
-- **Performance**: extraction in a Worker on a 200px copy; the eyedropper samples a cached canvas; preset thumbnails use `useDeferredValue` so they never slow the main preview.
+- **Performance**: colours animate once, on the preview root's registered tokens, not again on every element. While a slider is held, the preview follows it directly instead of re-starting fades, and the theme is computed once per change and shared. Extraction runs in a Worker on a 200px copy; the eyedropper samples a cached canvas; preset thumbnails use `useDeferredValue` so they never slow the main preview.
 - **Determinism**: the same image always gives the same palette, which matters for share links and demos.
 
 ## Limitations & future work
