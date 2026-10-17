@@ -168,7 +168,7 @@ export function generateTheme(palette: RoleColors, preset: Preset, adj: Adjustme
     row('muted-card', 'Lighter text on cards', textMuted, onCard, TEXT_TARGET, fixed.has('muted') || cardRaised),
     row('primary', 'Main button', primaryText, [rendered(primary)], TEXT_TARGET, fixed.has('primary')),
     row('secondary', 'Second button', secondaryText, [rendered(secondary)], TEXT_TARGET, fixed.has('secondary')),
-    row('accent', 'Accent colour', accentText, [rendered(accent)], TEXT_TARGET, fixed.has('accent')),
+    row('accent', 'Highlight colour', accentText, [rendered(accent)], TEXT_TARGET, fixed.has('accent')),
     row('badge', 'Little tags (badges)', badgeText, [rendered(badgeBg)], TEXT_TARGET, fixed.has('badge')),
     row('input-text', 'Typing in text boxes', text, onInput, TEXT_TARGET, fixed.has('text') || inputRaised),
     row('error', 'Error messages', danger, statusBgs(danger), TEXT_TARGET, fixed.has('danger')),

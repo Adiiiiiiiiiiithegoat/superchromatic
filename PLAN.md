@@ -52,3 +52,8 @@
 - [x] Move readability chip from top bar to Accessibility header
 - [x] Drop app-only --wallpaper-fallback from exports
 - [x] Deploy + live smoke test
+
+## Jargon sweep
+- [x] Plain-word labels across controls, toasts and Save dialog
+- [x] Tests, README, NOTES and video script updated
+- [x] Commit, push, deploy + live smoke test

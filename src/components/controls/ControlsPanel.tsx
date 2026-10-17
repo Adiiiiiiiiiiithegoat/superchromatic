@@ -7,15 +7,15 @@ import { RolesSection } from './RoleSlots'
 import { Section } from './Section'
 import { WallpaperSection } from './UploadZone'
 
-export const SHEET_TABS = ['Image', 'Palette', 'Preset', 'Adjust', 'A11y'] as const
+export const SHEET_TABS = ['Picture', 'Colours', 'Style', 'Tweak', 'Read'] as const
 
 export const SECTIONS: { id: string; title: string; tab: (typeof SHEET_TABS)[number]; Component: ComponentType; Aside?: ComponentType }[] = [
-  { id: 'wallpaper', title: 'Wallpaper', tab: 'Image', Component: WallpaperSection },
-  { id: 'palette', title: 'Palette', tab: 'Palette', Component: PaletteSection },
-  { id: 'roles', title: 'Roles', tab: 'Palette', Component: RolesSection },
-  { id: 'preset', title: 'Preset', tab: 'Preset', Component: PresetSection },
-  { id: 'adjust', title: 'Adjustments', tab: 'Adjust', Component: AdjustSection },
-  { id: 'a11y', title: 'Accessibility', tab: 'A11y', Component: A11ySection, Aside: A11yChip },
+  { id: 'wallpaper', title: 'Picture', tab: 'Picture', Component: WallpaperSection },
+  { id: 'palette', title: 'Colours', tab: 'Colours', Component: PaletteSection },
+  { id: 'roles', title: 'Where each colour goes', tab: 'Colours', Component: RolesSection },
+  { id: 'preset', title: 'Style', tab: 'Style', Component: PresetSection },
+  { id: 'adjust', title: 'Fine-tune', tab: 'Tweak', Component: AdjustSection },
+  { id: 'a11y', title: 'Easy to read', tab: 'Read', Component: A11ySection, Aside: A11yChip },
 ]
 
 export function ControlsPanel() {

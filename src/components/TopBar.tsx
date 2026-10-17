@@ -40,12 +40,12 @@ export function TopBar({ onToggleControls, controlsOpen }: { onToggleControls?: 
   const share = async () => {
     const s = useThemeStore.getState()
     const url = shareUrl(s)
-    notify((await copyText(url)) ? 'Share link copied. The wallpaper itself isn’t included.' : 'Could not copy the link.')
+    notify((await copyText(url)) ? 'Link copied. Your picture isn’t included, just the colours and settings.' : 'Could not copy the link.')
   }
 
   const copyCss = async () => {
     const ok = await copyText(toCss(theme.vars))
-    notify(ok ? 'CSS variables copied' : 'Could not copy. Use Export instead.')
+    notify(ok ? 'CSS code copied' : 'Could not copy. Use Export instead.')
     if (ok && !reduceMotion) setBurst((b) => b + 1)
   }
 
@@ -59,18 +59,18 @@ export function TopBar({ onToggleControls, controlsOpen }: { onToggleControls?: 
       <div className="flex min-w-0 items-center gap-2">
         <span aria-hidden className="size-3.5 shrink-0 rounded-full transition-[background] duration-300" style={{ background: `linear-gradient(135deg, ${primary}, ${accent})` }} />
         <h1 className="text-[14px] font-semibold tracking-tight">SuperChromatic</h1>
-        <span className="hidden truncate text-[12.5px] text-ink-subtle xl:inline">Drop a wallpaper. Get a whole design system.</span>
+        <span className="hidden truncate text-[12.5px] text-ink-subtle xl:inline">Drop in a picture. Get a whole website’s colours.</span>
       </div>
       <div className="ml-auto flex items-center gap-1.5">
         <button type="button" className={btn} onClick={share} aria-label="Copy share link">
           <Link2 aria-hidden className="size-3.5" /> <span className="max-md:hidden">Share</span>
         </button>
-        <button type="button" className={`${btn} relative`} onClick={copyCss} aria-label="Copy CSS variables">
+        <button type="button" className={`${btn} relative`} onClick={copyCss} aria-label="Copy CSS code">
           <Clipboard aria-hidden className="size-3.5" /> <span className="max-md:hidden">Copy CSS</span>
           <AnimatePresence>{burst > 0 && <Sparkles key={burst} colors={[primary, accent, theme.vars['--secondary']]} />}</AnimatePresence>
         </button>
-        <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-md bg-ink px-2.5 text-[13px] font-medium text-app transition-opacity hover:opacity-85 max-sm:h-11 max-sm:px-3" onClick={() => setExportOpen(true)} aria-label="Export theme">
-          <Download aria-hidden className="size-3.5" /> <span className="max-md:hidden">Export</span>
+        <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-md bg-ink px-2.5 text-[13px] font-medium text-app transition-opacity hover:opacity-85 max-sm:h-11 max-sm:px-3" onClick={() => setExportOpen(true)} aria-label="Save your theme">
+          <Download aria-hidden className="size-3.5" /> <span className="max-md:hidden">Save</span>
         </button>
       </div>
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />

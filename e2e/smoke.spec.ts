@@ -82,7 +82,7 @@ for (const width of [390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/')
     // On mobile the palette lives in the bottom sheet's Palette tab.
-    if (width < 640) await page.getByRole('tab', { name: 'Palette' }).click()
+    if (width < 640) await page.getByRole('tab', { name: 'Colours' }).click()
     await expect(page.getByTestId('swatches').locator('li').first()).toBeVisible({ timeout: 15_000 })
     const overflow = await page.evaluate(() => {
       const offenders = [...document.querySelectorAll<HTMLElement>('body *')].filter((el) => {
@@ -101,7 +101,7 @@ test('uploaded wallpaper survives a reload', async ({ page }) => {
   const recent = page.getByTestId('recent-uploads').locator('li')
   await expect(recent).toHaveCount(1, { timeout: 15_000 })
   const primary = await token(page, '--primary')
-  const wallpaper = page.getByRole('img', { name: 'Wallpaper: aurora.jpg' })
+  const wallpaper = page.getByRole('img', { name: 'Picture: aurora.jpg' })
   await expect(wallpaper).toBeVisible()
 
   await page.reload()
@@ -134,7 +134,7 @@ test('without IndexedDB an upload falls back to the first sample on reload', asy
   await page.addInitScript(() => Object.defineProperty(window, 'indexedDB', { get: () => { throw new Error('blocked') } }))
   await ready(page)
   await page.getByTestId('file-input').setInputFiles('public/samples/aurora.jpg')
-  await expect(page.getByRole('img', { name: 'Wallpaper: aurora.jpg' })).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByRole('img', { name: 'Picture: aurora.jpg' })).toBeVisible({ timeout: 15_000 })
   await expect(page.getByTestId('sample-sunset-dunes')).toHaveAttribute('aria-pressed', 'false')
   await page.reload()
   await expect(page.getByTestId('sample-sunset-dunes')).toHaveAttribute('aria-pressed', 'true', { timeout: 15_000 })

@@ -65,7 +65,7 @@ export function A11ySection() {
                 </span>
               )}
               <span
-                title={`WCAG ${g === 'Fail' ? 'fail' : g}`}
+                title={g === 'Fail' ? 'Below the AA rule' : `Meets the ${g} rule`}
                 className={`w-[4.5rem] shrink-0 rounded px-1 py-0.5 text-center text-[11px] font-medium ${
                   g === 'Fail' ? 'bg-bad/15 text-bad' : g === 'AAA' ? 'bg-good/20 text-good' : 'bg-good/10 text-good'
                 }`}

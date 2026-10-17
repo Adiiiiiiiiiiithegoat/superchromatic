@@ -109,6 +109,19 @@ flowchart LR
 - **Report panel**: every pair with its ratio, a Great (AAA) / Good (AA) / Hard to read badge, an "Aa" sample and a wrench marker if auto-fix changed it. The summary chip sits in the section header.
 - **The app itself**: native `<details>`, `<dialog>`, range inputs and selects for free keyboard support; visible focus rings; labels and ARIA on every control; an eyedropper that works by keyboard; the preview's native controls follow the theme's `color-scheme`; `prefers-reduced-motion` turns off every animation.
 
+## Plain language
+
+The controls avoid design and maths jargon so anyone, kids included, can use them. Internal names stay technical in the code.
+
+| In the code | On screen |
+|---|---|
+| Wallpaper / Palette / Roles / Preset / Adjustments / Accessibility | Picture / Colours / Where each colour goes / Style / Fine-tune / Easy to read |
+| Primary / Secondary / Accent / Background | Main / Second / Highlight / Background |
+| K-means / Median cut / Vibrant | Natural / Varied / Vibrant |
+| Saturation / Overlay opacity / Corner radius | Colour strength / Background tint / Corner roundness |
+| AAA / AA / Fail | Great / Good / Hard to read (with a short glossary) |
+| Export | Save (each format says where it's used) |
+
 ## Persistence
 
 - **Settings**: the palette, roles, preset, sliders, mode and which wallpaper is showing are saved to localStorage (zustand `persist`).

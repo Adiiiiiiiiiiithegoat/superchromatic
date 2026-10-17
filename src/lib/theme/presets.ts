@@ -54,7 +54,7 @@ export const PRESETS: Preset[] = [
   {
     id: 'minimal',
     name: 'Minimal',
-    tagline: 'Quiet neutrals, hairlines',
+    tagline: 'Calm greys, thin lines',
     background: 'solid',
     bg: { l: { light: 0.98, dark: 0.16 }, cScale: 0.3, cMax: 0.01, hueFrom: 'background' },
     wash: 0.08,
@@ -91,7 +91,7 @@ export const PRESETS: Preset[] = [
   {
     id: 'warm',
     name: 'Warm',
-    tagline: 'Ambers, terracotta, cream',
+    tagline: 'Oranges, browns and cream',
     background: 'tinted',
     bg: { l: { light: 0.965, dark: 0.19 }, cScale: 0.6, cMax: 0.03, hueFrom: 'background' },
     wash: 0.14,
@@ -110,7 +110,7 @@ export const PRESETS: Preset[] = [
   {
     id: 'cool',
     name: 'Cool',
-    tagline: 'Slate, steel, crisp edges',
+    tagline: 'Blue-greys, sharp corners',
     background: 'tinted',
     bg: { l: { light: 0.97, dark: 0.17 }, cScale: 0.6, cMax: 0.025, hueFrom: 'background' },
     wash: 0.12,
@@ -129,7 +129,7 @@ export const PRESETS: Preset[] = [
   {
     id: 'glass',
     name: 'Glass',
-    tagline: 'Frosted cards on the wallpaper',
+    tagline: 'See-through frosted cards on your picture',
     background: 'wallpaper',
     bg: { l: { light: 0.92, dark: 0.2 }, cScale: 0.8, cMax: 0.05, hueFrom: 'background' },
     wash: 0,
@@ -147,7 +147,7 @@ export const PRESETS: Preset[] = [
   {
     id: 'neon',
     name: 'Neon',
-    tagline: 'Midnight grid, glowing edges',
+    tagline: 'Dark grid, glowing edges',
     preferredMode: 'dark',
     background: 'grid',
     bg: { l: { light: 0.97, dark: 0.13 }, cScale: 0.6, cMax: 0.03, hueFrom: 'background' },
@@ -185,7 +185,7 @@ export const PRESETS: Preset[] = [
   {
     id: 'mono',
     name: 'Monochrome',
-    tagline: 'One hue, ten tones',
+    tagline: 'One colour, many shades',
     background: 'solid',
     bg: { l: { light: 0.985, dark: 0.15 }, cScale: 0.5, cMax: 0.015, hueFrom: 'primary' },
     wash: 0.06,

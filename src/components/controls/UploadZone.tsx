@@ -43,7 +43,7 @@ export function WallpaperSection() {
     >
       {!hintDismissed && (
         <div className="flex items-start gap-2 rounded-lg border border-line bg-raised px-3 py-2 text-[12.5px] text-ink-muted">
-          <span className="flex-1">Try a sample or drop your own wallpaper. Then click the image to pick any colour from it.</span>
+          <span className="flex-1">Try one of the example pictures or add your own. Then click the picture to grab any colour from it.</span>
           <button type="button" onClick={dismissHint} aria-label="Dismiss hint" className="text-ink-subtle hover:text-ink max-sm:p-2">
             <X className="size-3.5" />
           </button>
@@ -71,16 +71,16 @@ export function WallpaperSection() {
         ) : (
           <button type="button" onClick={() => input.current?.click()} className="flex h-40 w-full flex-col items-center justify-center gap-2 text-ink-muted hover:text-ink">
             <ImagePlus aria-hidden className="size-6" />
-            <span className="text-[13px] font-medium">Drop a wallpaper here</span>
+            <span className="text-[13px] font-medium">Drop a picture here</span>
             <span className="text-[12px] text-ink-subtle">PNG, JPG or WebP · up to 15 MB</span>
           </button>
         )}
-        {dragging && <div className="pointer-events-none absolute inset-0 grid place-items-center rounded-xl bg-app/70 text-[13px] font-medium">Drop to extract colours</div>}
+        {dragging && <div className="pointer-events-none absolute inset-0 grid place-items-center rounded-xl bg-app/70 text-[13px] font-medium">Drop to get its colours</div>}
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
         <button type="button" className={btn} onClick={() => input.current?.click()}>
-          <Upload aria-hidden className="size-3.5" /> {image ? 'Replace image' : 'Browse'}
+          <Upload aria-hidden className="size-3.5" /> {image ? 'Choose another picture' : 'Choose a picture'}
         </button>
         <span className="text-[12px] text-ink-subtle max-sm:hidden">or drop, or paste with Ctrl+V</span>
       </div>
@@ -92,7 +92,7 @@ export function WallpaperSection() {
       )}
 
       <div>
-        <p className="mb-1.5 text-[12px] text-ink-subtle">Samples</p>
+        <p className="mb-1.5 text-[12px] text-ink-subtle">Example pictures</p>
         <ul className="grid grid-cols-5 gap-1.5">
           {SAMPLES.map((s) => (
             <li key={s.id}>
@@ -100,7 +100,7 @@ export function WallpaperSection() {
                 type="button"
                 data-testid={`sample-${s.id}`}
                 aria-pressed={image?.src === s.src}
-                aria-label={`Use sample wallpaper: ${s.name}`}
+                aria-label={`Use example picture: ${s.name}`}
                 title={s.name}
                 onClick={() => void loadSample(s)}
                 className={`block aspect-[4/3] w-full overflow-hidden rounded-md ring-offset-2 ring-offset-panel transition ${image?.src === s.src ? 'ring-2 ring-ink' : 'opacity-80 hover:opacity-100'}`}
@@ -114,7 +114,7 @@ export function WallpaperSection() {
 
       {recent.length > 0 && (
         <div>
-          <p className="mb-1.5 text-[12px] text-ink-subtle">Recent uploads</p>
+          <p className="mb-1.5 text-[12px] text-ink-subtle">Your recent pictures</p>
           <ul data-testid="recent-uploads" className="grid grid-cols-5 gap-1.5">
             {recent.map((r) => (
               <li key={r.id} className="relative">
@@ -218,7 +218,7 @@ function ImageInspector({ src, name, scanning }: { src: string; name: string; sc
     const hex = sampleAt(nx, ny)
     if (!hex) return
     addColor(hex, 'picked')
-    notify(`Picked ${hex} and added it to the palette`)
+    notify(`Added ${hex} to your colours`)
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
@@ -240,7 +240,7 @@ function ImageInspector({ src, name, scanning }: { src: string; name: string; sc
     <div
       role="button"
       tabIndex={0}
-      aria-label={`Wallpaper “${name}”. Click to pick a colour. With the keyboard, use arrow keys to move the picker and Enter to add the colour.`}
+      aria-label={`Picture “${name}”. Click to grab a colour. With the keyboard, use the arrow keys to move and Enter to add the colour.`}
       className="relative h-48 cursor-crosshair overflow-hidden rounded-xl bg-raised touch-manipulation"
       onPointerMove={(e) => {
         if (e.pointerType !== 'mouse') return
@@ -256,7 +256,7 @@ function ImageInspector({ src, name, scanning }: { src: string; name: string; sc
       onKeyDown={onKeyDown}
       onBlur={() => setCursor(null)}
     >
-      <img ref={img} src={src} alt={`Wallpaper: ${name}`} onLoad={prepareSampler} className="size-full object-contain" draggable={false} />
+      <img ref={img} src={src} alt={`Picture: ${name}`} onLoad={prepareSampler} className="size-full object-contain" draggable={false} />
 
       {scanning && (
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">

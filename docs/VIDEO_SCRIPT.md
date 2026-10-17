@@ -15,7 +15,7 @@ Everything runs in the browser. There's no backend and no AI API. The extraction
 ## 2. Demo (0:30–3:30)
 
 **Samples and upload**
-[Click through two or three sample thumbnails]
+[Click through two or three example pictures]
 So you're never staring at an empty screen, there are five sample wallpapers. I generated all of them for this project. Each click re-extracts the palette, and you can see the preview restyle smoothly.
 
 [Drag an image file onto the drop zone, then paste one with Ctrl+V]
@@ -32,28 +32,28 @@ There are three colour styles. Natural is the default: under the hood it's k-mea
 And this is the eyedropper. Hover to get a magnifier, click to add that exact colour. It works with the keyboard too.
 
 **Roles**
-[Scroll to Roles]
-Every theme needs four roles: primary, secondary, accent and background. They're auto-assigned. Background is the most common colour, primary is the most vivid and present one, and accent is the one furthest away in hue. [Drag a swatch onto Accent] I can drag a colour onto a role, [use the dropdown under a swatch] or use this menu, which also works on touch. [Click Shuffle] Shuffle swaps them around with an animation. [Click Reset] Reset goes back to auto.
+[Scroll to "Where each colour goes"]
+Every theme needs four roles, which the app calls Main, Second, Highlight and Background so anyone can follow along. They're auto-assigned. Background is the most common colour, primary is the most vivid and present one, and accent is the one furthest away in hue. [Drag a swatch onto Highlight] I can drag a colour onto a role, [use the dropdown under a swatch] or use this menu, which also works on touch. [Click Shuffle] Shuffle swaps them around with an animation. [Click "Let us choose"] And "Let us choose" goes back to automatic.
 
 **Presets**
-[Click each preset slowly: Minimal, Vibrant, Warm, Cool, Glass, Neon, Pastel, Monochrome]
+[Open Style; click each one slowly: Minimal, Vibrant, Warm, Cool, Glass, Neon, Pastel, Monochrome]
 There are eight presets, and each one is a set of rules, not a fixed palette. Minimal keeps things neutral with hairline borders. Vibrant pushes chroma to the edge of what the screen can show. Warm and Cool pull every hue toward ambers or slates, but only partway, so it still looks like your image. Glass uses the wallpaper as the page with frosted cards. Neon is a dark grid with glows. Pastel is soft and rounded. Monochrome uses only the primary hue on a ten-step tonal scale. And the thumbnails are live: each one is that preset applied to your current palette.
 
 **Sliders**
-[Glass preset; drag Saturation, Brightness, Contrast, then Blur and Overlay]
-These are the adjustments: saturation, brightness and contrast, then background blur and overlay opacity, which you can really see on Glass. [Switch to Minimal, drag Blur] They matter in every preset, because there's always a mesh gradient of the palette behind the hero card. [Double-click a slider] Double-click resets one.
+[Glass style; in Fine-tune drag Colour strength, Brightness, Contrast, then Background blur and Background tint]
+These are the fine-tune sliders: colour strength (saturation), brightness and contrast, then background blur and background tint (overlay opacity), which you can really see on Glass. [Switch to Minimal, drag Blur] They matter in every preset, because there's always a mesh gradient of the palette behind the hero card. [Double-click a slider] Double-click resets one.
 
 **Accessibility auto-fix**
-[Open the Accessibility section; drag Contrast to 0]
-Here's the part I'm proudest of. I just crushed the contrast, but the chip on the Accessibility section still says every text is readable. That's because auto-fix nudges the lightness of any failing colour until it meets WCAG AA, keeping its hue and chroma. [Turn auto-fix off] If I switch it off, you can see the real failures in red. [Turn it back on] The wrench icons show which pairs were adjusted.
+[Open the "Easy to read" section; drag Contrast to 0]
+Here's the part I'm proudest of. I just crushed the contrast, but the chip on the "Easy to read" section still says every text is readable. That's because auto-fix nudges the lightness of any failing colour until it meets WCAG AA, keeping its hue and chroma. [Turn auto-fix off] If I switch it off, you can see the real failures in red. [Turn it back on] The wrench icons show which pairs were adjusted.
 
 **Mobile**
 [DevTools device mode at 390px, or a phone]
 On a phone, the preview fills the screen and the controls move into a bottom sheet. [Drag the handle between peek, half and full; tap the tabs] You can drag it between three heights, and every target is at least 44 pixels.
 
 **Export and share**
-[Click Copy CSS, show the sparkle; open Export, switch tabs, download]
-Finally, Copy CSS puts the variables on your clipboard. Export gives you CSS variables, JSON tokens or a Tailwind v4 theme block. [Click Share, open the link in a new tab] And Share creates a link that rebuilds the exact theme. The wallpaper can't fit in a URL, so it shows a gradient made from your palette instead.
+[Click Copy CSS, show the sparkle; open Save, switch tabs, download]
+Finally, Copy CSS puts the variables on your clipboard. Save gives you CSS variables, JSON tokens or a Tailwind v4 theme block, each with a one-line note on where it goes. [Click Share, open the link in a new tab] And Share creates a link that rebuilds the exact theme. The wallpaper can't fit in a URL, so it shows a gradient made from your palette instead.
 
 ## 3. Code tour (3:30–5:45)
 

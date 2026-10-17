@@ -40,7 +40,7 @@ export function RolesSection() {
     <div className="space-y-3">
       {draggable.length > 0 && (
         <div>
-          <p className="mb-1.5 text-[12px] text-ink-subtle">Drag a colour onto a role (or use the menu under each swatch).</p>
+          <p className="mb-1.5 text-[12px] text-ink-subtle">Drag a colour onto a box to choose where it’s used (or use the menu under each colour).</p>
           <ul className="flex flex-wrap gap-1.5">
             {draggable.map((s) => (
               <li key={s.id}>
@@ -80,8 +80,8 @@ export function RolesSection() {
               >
                 <div className="flex items-center justify-between text-[12px]">
                   <span className="font-medium">{ROLE_LABEL[role]}</span>
-                  {derived && <span className="text-[10.5px] text-ink-subtle" title="No colour picked for this role, so it's derived from Primary by hue rotation">derived</span>}
-                  {!derived && overrides[role] !== undefined && <span className="text-[10.5px] text-ink-subtle">manual</span>}
+                  {derived && <span className="text-[10.5px] text-ink-subtle" title="You haven’t chosen a colour here, so we made one that goes with your Main colour">auto</span>}
+                  {!derived && overrides[role] !== undefined && <span className="text-[10.5px] text-ink-subtle">your pick</span>}
                 </div>
                 <motion.div
                   layoutId={chipId(role)}
@@ -98,10 +98,10 @@ export function RolesSection() {
 
       <div className="flex gap-2">
         <button type="button" className={btn} onClick={shuffleRoles} disabled={draggable.length < 2}>
-          <Shuffle aria-hidden className="size-3.5" /> Shuffle roles
+          <Shuffle aria-hidden className="size-3.5" /> Shuffle
         </button>
         <button type="button" className={btn} onClick={resetRoles} disabled={Object.keys(overrides).length === 0}>
-          <RotateCcw aria-hidden className="size-3.5" /> Reset to auto
+          <RotateCcw aria-hidden className="size-3.5" /> Let us choose
         </button>
       </div>
     </div>

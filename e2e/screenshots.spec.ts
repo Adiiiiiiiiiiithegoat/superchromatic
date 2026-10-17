@@ -15,7 +15,7 @@ for (const size of SIZES) {
       await page.setViewportSize({ width: size.width, height: size.height })
       await page.goto('/')
       const mobile = size.width < 640
-      if (mobile) await page.getByRole('tab', { name: 'Preset' }).click()
+      if (mobile) await page.getByRole('tab', { name: 'Style' }).click()
       await page.getByTestId(`preset-${preset}`).click()
       if (mobile) await page.getByRole('button', { name: /Controls sheet is/ }).click() // half → full
       if (mobile) await page.getByRole('button', { name: /Controls sheet is/ }).click() // full → peek

@@ -31,7 +31,7 @@ function useStartup() {
     if (shared) {
       store.applyShare(shared)
       history.replaceState(null, '', location.pathname + location.search)
-      store.notify('Theme loaded from link. Wallpaper not included, showing a palette gradient.')
+      store.notify('Theme opened from a link. The picture isn’t included, so you’ll see a blend of its colours instead.')
     } else if (store.image?.kind === 'upload' && store.image.id) {
       // Bring the wallpaper back but keep the saved palette, roles and sliders: no re-extraction.
       void store.openUpload(store.image.id, true).then((ok) => {

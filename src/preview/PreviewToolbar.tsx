@@ -56,7 +56,7 @@ export function PreviewToolbar({ device, onDevice, compact, comparing, onCompare
         <button
           type="button"
           aria-pressed={comparing}
-          title="Hold to see the previous theme"
+          title="Hold to see your colours from before the last change"
           onPointerDown={() => onCompare(true)}
           onPointerUp={() => onCompare(false)}
           onPointerLeave={() => onCompare(false)}

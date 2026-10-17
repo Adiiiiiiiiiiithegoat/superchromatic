@@ -6,10 +6,10 @@ import { PRESETS_BY_ID } from '../../lib/theme/presets'
 import { useRoles, useTheme, useThemeStore } from '../../store/useThemeStore'
 import { btn, iconBtn } from '../ui'
 
-const TABS: { id: ExportFormat; label: string }[] = [
-  { id: 'css', label: 'CSS variables' },
-  { id: 'json', label: 'JSON tokens' },
-  { id: 'tailwind', label: 'Tailwind v4' },
+const TABS: { id: ExportFormat; label: string; hint: string }[] = [
+  { id: 'css', label: 'CSS', hint: 'Paste this into your website’s stylesheet. Works with any website.' },
+  { id: 'json', label: 'JSON', hint: 'A list of your colours and settings, for apps and design tools.' },
+  { id: 'tailwind', label: 'Tailwind', hint: 'For websites built with Tailwind CSS (version 4).' },
 ]
 
 export function ExportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -42,7 +42,7 @@ export function ExportModal({ open, onClose }: { open: boolean; onClose: () => v
       className="m-auto w-[min(760px,calc(100vw-24px))] rounded-xl border border-line bg-panel p-0 text-ink shadow-2xl backdrop:bg-black/60"
     >
       <div className="flex items-center gap-2 border-b border-line px-4 py-3">
-        <h2 id="export-title" className="text-[14px] font-semibold">Export theme</h2>
+        <h2 id="export-title" className="text-[14px] font-semibold">Save your theme</h2>
         <button type="button" onClick={onClose} aria-label="Close" className={`${iconBtn} ml-auto`}>
           <X className="size-4" />
         </button>
@@ -64,6 +64,7 @@ export function ExportModal({ open, onClose }: { open: boolean; onClose: () => v
             </button>
           ))}
         </div>
+        <p className="mb-2 text-[12px] text-ink-subtle">{TABS.find((t) => t.id === tab)?.hint}</p>
         <pre
           id="export-panel"
           role="tabpanel"
@@ -74,7 +75,7 @@ export function ExportModal({ open, onClose }: { open: boolean; onClose: () => v
           {out.text}
         </pre>
         <div className="mt-3 flex flex-wrap gap-2">
-          <button type="button" className={btn} onClick={async () => notify((await copyText(out.text)) ? 'Copied to clipboard' : 'Copy failed. Select the text instead.')}>
+          <button type="button" className={btn} onClick={async () => notify((await copyText(out.text)) ? 'Copied to clipboard' : 'Couldn’t copy. Select the text and copy it yourself.')}>
             <Copy aria-hidden className="size-3.5" /> Copy
           </button>
           <button type="button" className={btn} onClick={() => download(out.text, out.filename, out.mime)}>

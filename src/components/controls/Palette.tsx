@@ -6,7 +6,7 @@ import { useRoles, useThemeStore } from '../../store/useThemeStore'
 import { Segmented, btn } from '../ui'
 import { Slider } from './Slider'
 
-export const ROLE_LABEL: Record<Role, string> = { primary: 'Primary', secondary: 'Secondary', accent: 'Accent', background: 'Background' }
+export const ROLE_LABEL: Record<Role, string> = { primary: 'Main', secondary: 'Second', accent: 'Highlight', background: 'Background' }
 
 const STRATEGIES: { id: Strategy; label: string; title: string }[] = [
   // Plain-word names for k-means, median cut and the vibrant picker.
@@ -39,20 +39,20 @@ export function PaletteSection() {
       <div className="space-y-2">
         <Segmented label="Colour style" value={strategy} options={STRATEGIES} onChange={setStrategy} disabled={!image} />
         <p className="text-[12px] text-ink-subtle">{STRATEGIES.find((s) => s.id === strategy)?.title}</p>
-        <Slider label="Colours to extract" min={5} max={10} value={k} defaultValue={8} onChange={setK} />
-        {!image && swatches.length > 0 && <p className="text-[12px] text-ink-subtle">Palette restored from a link. Add a wallpaper to re-extract.</p>}
+        <Slider label="How many colours" min={5} max={10} value={k} defaultValue={8} onChange={setK} />
+        {!image && swatches.length > 0 && <p className="text-[12px] text-ink-subtle">These colours came from a shared link. Add a picture to get new ones.</p>}
       </div>
 
       {status === 'extracting' ? (
-        <ul aria-label="Extracting colours" aria-busy className="grid grid-cols-3 gap-2">
+        <ul aria-label="Finding colours" aria-busy className="grid grid-cols-3 gap-2">
           {Array.from({ length: k }, (_, i) => (
             <li key={i} className="sc-shimmer h-[106px] rounded-lg" />
           ))}
         </ul>
       ) : swatches.length === 0 ? (
-        <p className="rounded-lg border border-line px-3 py-6 text-center text-[12.5px] text-ink-muted">No colours yet. Pick a sample or drop a wallpaper above.</p>
+        <p className="rounded-lg border border-line px-3 py-6 text-center text-[12.5px] text-ink-muted">No colours yet. Pick an example picture or add your own above.</p>
       ) : (
-        <ul aria-label="Extracted colours" data-testid="swatches" className="grid grid-cols-3 gap-2">
+        <ul aria-label="Colours from the picture" data-testid="swatches" className="grid grid-cols-3 gap-2">
           {swatches.map((s, i) => (
             <SwatchChip key={s.id} swatch={s} index={i} />
           ))}
@@ -60,7 +60,7 @@ export function PaletteSection() {
       )}
 
       <label className={`${btn} relative cursor-pointer focus-within:outline-2 focus-within:outline-focus`}>
-        <Plus aria-hidden className="size-3.5" /> Add custom colour
+        <Plus aria-hidden className="size-3.5" /> Add your own colour
         <input ref={colorInput} type="color" defaultValue="#7c5cff" className="absolute inset-0 cursor-pointer opacity-0" aria-label="Add a custom colour" />
       </label>
     </div>
@@ -88,7 +88,7 @@ function SwatchChip({ swatch, index }: { swatch: Swatch; index: number }) {
       <button
         type="button"
         aria-pressed={selected}
-        aria-label={`${swatch.hex}, ${swatch.source === 'picked' ? 'picked' : `${pop}% of image`}. ${selected ? 'Used in theme' : 'Not used'}${roles.length ? `, ${roles.map((r) => ROLE_LABEL[r]).join(' and ')}` : ''}`}
+        aria-label={`${swatch.hex}, ${swatch.source === 'picked' ? 'picked' : `${pop}% of the picture`}. ${selected ? 'Used' : 'Not used'}${roles.length ? `, ${roles.map((r) => ROLE_LABEL[r]).join(' and ')}` : ''}`}
         onClick={() => toggleSelected(swatch.id)}
         className={`relative flex h-14 w-full items-end justify-between rounded-lg p-1.5 ring-1 ring-line transition-opacity ${selected ? '' : 'opacity-45'}`}
         style={{ background: swatch.hex, color: light ? '#111' : '#fff' }}
@@ -110,12 +110,12 @@ function SwatchChip({ swatch, index }: { swatch: Swatch; index: number }) {
         <div className="h-full bg-ink-muted" style={{ width: `${Math.max(pop, swatch.population ? 2 : 0)}%` }} />
       </div>
       <select
-        aria-label={`Role for ${swatch.hex}`}
+        aria-label={`Where to use ${swatch.hex}`}
         value={roles[0] ?? ''}
         onChange={(e) => (e.target.value ? setRole(e.target.value as Role, swatch.id) : clearRoleFor(swatch.id))}
         className="mt-1 h-7 w-full rounded-md border border-line bg-raised px-1 text-[11.5px] text-ink max-sm:h-11"
       >
-        <option value="">No role</option>
+        <option value="">Not used</option>
         {ROLES.map((r) => (
           <option key={r} value={r}>{ROLE_LABEL[r]}</option>
         ))}

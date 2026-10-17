@@ -22,7 +22,7 @@ export function BottomSheet() {
   const heights: Record<Snap, number> = { peek: 112, half: Math.round(vh * 0.5), full: Math.round(vh * 0.88) }
   const full = heights.full
   const [snap, setSnap] = useState<Snap>('half')
-  const [tab, setTab] = useState<(typeof SHEET_TABS)[number]>('Image')
+  const [tab, setTab] = useState<(typeof SHEET_TABS)[number]>('Picture')
   const reduceMotion = useReducedMotion()
   const controls = useDragControls()
   const y = useMotionValue(full - heights[snap])

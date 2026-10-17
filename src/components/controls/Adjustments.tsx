@@ -7,12 +7,12 @@ const pct = (v: number) => `${v}%`
 const px = (v: number) => `${v}px`
 
 const SLIDERS: { key: keyof Adjustments; label: string; min: number; max: number; format: (v: number) => string }[] = [
-  { key: 'saturation', label: 'Saturation', min: 0, max: 200, format: pct },
+  { key: 'saturation', label: 'Colour strength', min: 0, max: 200, format: pct },
   { key: 'brightness', label: 'Brightness', min: -50, max: 50, format: (v) => (v > 0 ? `+${v}` : String(v)) },
   { key: 'contrast', label: 'Contrast', min: 0, max: 200, format: pct },
   { key: 'blur', label: 'Background blur', min: 0, max: 40, format: px },
-  { key: 'overlay', label: 'Overlay opacity', min: 0, max: 100, format: pct },
-  { key: 'radius', label: 'Corner radius', min: 0, max: 28, format: px },
+  { key: 'overlay', label: 'Background tint', min: 0, max: 100, format: pct },
+  { key: 'radius', label: 'Corner roundness', min: 0, max: 28, format: px },
 ]
 
 export function AdjustSection() {
@@ -35,7 +35,7 @@ export function AdjustSection() {
           onChange={(v) => setAdjustment(s.key, v)}
         />
       ))}
-      <p className="text-[12px] text-ink-subtle">Double-click a slider (or press Delete) to reset it to the preset’s default.</p>
+      <p className="text-[12px] text-ink-subtle">Double-click a slider (or press Delete) to put it back to how the style started.</p>
     </div>
   )
 }
