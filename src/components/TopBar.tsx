@@ -57,7 +57,12 @@ export function TopBar({ onToggleControls, controlsOpen }: { onToggleControls?: 
         </button>
       )}
       <div className="flex min-w-0 items-center gap-2">
-        <span aria-hidden className="size-3.5 shrink-0 rounded-full transition-[background] duration-300" style={{ background: `linear-gradient(135deg, ${primary}, ${accent})` }} />
+        {/* Same 2×2 swatch mark as the favicon, filled with the live theme's four roles. */}
+        <span aria-hidden className="grid size-4 shrink-0 grid-cols-2 gap-px">
+          {[primary, theme.vars['--secondary'], accent, theme.vars['--bg']].map((c, i) => (
+            <span key={i} className="rounded-[2px] ring-1 ring-line ring-inset transition-[background] duration-300" style={{ background: c }} />
+          ))}
+        </span>
         <h1 className="text-[14px] font-semibold tracking-tight">SuperChromatic</h1>
         <span className="hidden truncate text-[12.5px] text-ink-subtle xl:inline">Drop in a picture. Get a whole website’s colours.</span>
       </div>

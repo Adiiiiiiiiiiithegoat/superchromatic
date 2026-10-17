@@ -71,3 +71,7 @@
 - [x] Nav, footer and CTA buttons scroll to sections; pretend pages explain themselves
 - [x] Remove Changelog link from nav and footer
 - [x] Deploy + live smoke test
+
+## Brand mark
+- [x] Flat 2×2 swatch favicon + matching live top-bar mark
+- [x] Deploy + live smoke test
