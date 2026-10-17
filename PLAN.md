@@ -43,4 +43,4 @@
 - [x] Fallback to first sample when storage is unavailable
 - [x] Playwright reload / pruning / fallback tests
 - [x] README + NOTES updated
-- [ ] Production deploy + live smoke test
+- [x] Production deploy + live smoke test
