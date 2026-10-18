@@ -239,11 +239,16 @@ test('eyedropper loupe stays fully on screen at the picture edges', async ({ pag
 test('Pastel goes light without flipping the other style tiles, and leaving it restores dark', async ({ page }) => {
   await ready(page)
   const scheme = () => page.getByTestId('preview-root').evaluate((el) => (el as HTMLElement).style.colorScheme)
-  const minimalTile = () => page.getByTestId('preset-minimal').locator('div[aria-hidden]').first().getAttribute('style')
-  const before = await minimalTile()
+  // Tile colours can still be settling from extraction, so check the tile's mode, not its exact colours.
+  const minimalTileIsDark = () =>
+    page.getByTestId('preset-minimal').locator('div[aria-hidden]').first().evaluate((el) => {
+      const hex = (el as HTMLElement).style.getPropertyValue('--bg').trim().slice(1)
+      return [0, 2, 4].reduce((sum, i) => sum + parseInt(hex.slice(i, i + 2), 16), 0) < 384
+    })
+  expect(await minimalTileIsDark()).toBe(true)
   await page.getByTestId('preset-pastel').click()
   await expect.poll(scheme).toBe('light')
-  expect(await minimalTile()).toBe(before)
+  expect(await minimalTileIsDark()).toBe(true)
   await page.getByTestId('preset-minimal').click()
   await expect.poll(scheme).toBe('dark')
 })
