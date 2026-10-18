@@ -40,6 +40,13 @@ body,
 #root {
   height: 100%;
 }
+/* Thin, trackless scrollbars in the chrome's ink; scrollbar-color inherits, so the preview overrides it. */
+html {
+  scrollbar-color: color-mix(in oklab, var(--color-ink-subtle) 55%, transparent) transparent;
+}
+* {
+  scrollbar-width: thin;
+}
 body {
   margin: 0;
   overflow: hidden;

@@ -9,6 +9,7 @@
   overflow: hidden;
   background-color: var(--bg);
   color: var(--text);
+  scrollbar-color: color-mix(in oklab, var(--text-subtle) 60%, transparent) transparent;
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.55;
