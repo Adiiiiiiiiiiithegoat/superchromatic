@@ -205,3 +205,33 @@ test('a held slider makes the preview follow it without fades', async ({ page })
   await page.getByTestId('preset-vibrant').click()
   expect(await root.evaluate((el) => getComputedStyle(el).transitionDuration.split(',')[0])).toBe('0.35s')
 })
+
+test('eyedropper loupe stays fully on screen at the picture edges', async ({ page }) => {
+  await ready(page)
+  await page.getByTestId('file-input').setInputFiles('public/samples/aurora.jpg')
+  const pic = page.getByRole('img', { name: 'Picture: aurora.jpg' })
+  await expect(pic).toBeVisible({ timeout: 15_000 })
+  await pic.scrollIntoViewIfNeeded()
+  // object-fit: contain letterboxes the picture; hover the drawn image, not the element box.
+  const b = await pic.evaluate((img: HTMLImageElement) => {
+    const r = img.getBoundingClientRect()
+    const s = Math.min(r.width / img.naturalWidth, r.height / img.naturalHeight)
+    const width = img.naturalWidth * s
+    const height = img.naturalHeight * s
+    return { x: r.x + (r.width - width) / 2, y: r.y + (r.height - height) / 2, width, height }
+  })
+  const view = page.viewportSize()!
+  for (const [x, y] of [[b.x + 3, b.y + 3], [b.x + b.width - 3, b.y + 3], [b.x + 3, b.y + b.height - 3]]) {
+    await page.mouse.move(x, y)
+    const loupe = page.locator('body > div.fixed[aria-hidden]')
+    const l = (await loupe.boundingBox())!
+    expect(l.x).toBeGreaterThanOrEqual(0)
+    expect(l.y).toBeGreaterThanOrEqual(0)
+    expect(l.x + l.width).toBeLessThanOrEqual(view.width)
+    expect(l.y + l.height).toBeLessThanOrEqual(view.height)
+    // The pointer must not sit on the loupe or its hex chip.
+    expect(x < l.x || x > l.x + l.width || y < l.y || y > l.y + l.height).toBe(true)
+  }
+  await page.mouse.move(b.x + 3, b.y + 3)
+  await page.screenshot({ path: 'test-results/loupe-edge.png' })
+})

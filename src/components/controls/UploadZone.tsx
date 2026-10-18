@@ -1,5 +1,6 @@
 import { ImagePlus, Pipette, Upload, X } from 'lucide-react'
 import { type KeyboardEvent, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { averageOklab, rgbaToOklab } from '../../lib/extract/pixels'
 import { SAMPLES } from '../../lib/samples'
 import { clamp, oklabToOklch, toHex } from '../../lib/theme/oklch'
@@ -150,7 +151,7 @@ const ZOOM = 6
 const LOUPE = 88
 
 interface Hover {
-  x: number // pointer position inside the element, px
+  x: number // pointer position in the viewport, px
   y: number
   nx: number // normalised position on the image, 0–1
   ny: number
@@ -211,7 +212,7 @@ function ImageInspector({ src, name, scanning }: { src: string; name: string; sc
     const nx = (x - b.left) / b.w
     const ny = (y - b.top) / b.h
     if (nx < 0 || nx > 1 || ny < 0 || ny > 1) return null
-    return { x, y, nx, ny, w: b.w, h: b.h }
+    return { x: e.clientX, y: e.clientY, nx, ny, w: b.w, h: b.h }
   }
 
   const pick = (nx: number, ny: number) => {
@@ -272,8 +273,13 @@ function ImageInspector({ src, name, scanning }: { src: string; name: string; sc
         />
       )}
 
-      {hover && (
-        <div aria-hidden className="pointer-events-none absolute flex -translate-y-full flex-col items-center" style={{ left: hover.x - LOUPE / 2, top: hover.y - 12 }}>
+      {hover && createPortal(
+        // Portalled + fixed so the panel's overflow can't clip it; flips below the pointer near the top of the screen.
+        <div
+          aria-hidden
+          className={`pointer-events-none fixed z-50 flex flex-col items-center ${hover.y < LOUPE + 40 ? '' : '-translate-y-full'}`}
+          style={{ left: clamp(hover.x - LOUPE / 2, 4, window.innerWidth - LOUPE - 4), top: hover.y < LOUPE + 40 ? hover.y + 16 : hover.y - 12 }}
+        >
           <span className="mb-1 flex items-center gap-1 rounded bg-black/75 px-1.5 py-0.5 font-mono text-[11px] text-white">
             <Pipette className="size-3" />
             {hover.hex}
@@ -292,7 +298,8 @@ function ImageInspector({ src, name, scanning }: { src: string; name: string; sc
           >
             <span className="absolute top-1/2 left-1/2 size-3 -translate-1/2 border border-white shadow-[0_0_0_1px_#000]" />
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )
