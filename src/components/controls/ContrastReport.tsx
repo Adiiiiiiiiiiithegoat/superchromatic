@@ -1,4 +1,4 @@
-import { Check, TriangleAlert, Wrench } from 'lucide-react'
+import { Check, TriangleAlert } from 'lucide-react'
 import { grade } from '../../lib/a11y/contrast'
 import { useTheme, useThemeStore } from '../../store/useThemeStore'
 import { Switch } from '../ui'
@@ -60,8 +60,8 @@ export function A11ySection() {
                 </p>
               </div>
               {c.fixed && (
-                <span title="We changed the shade so it’s easier to read" className="text-ink-subtle">
-                  <Wrench aria-label="fixed for you" className="size-3.5" />
+                <span title="We changed the shade so it’s easier to read" className="shrink-0 rounded border border-line px-1 py-0.5 text-[11px] text-ink-subtle">
+                  Adjusted
                 </span>
               )}
               <span
@@ -88,10 +88,6 @@ export function A11ySection() {
         <div>
           <dt className="inline font-medium text-ink-muted">Great (AAA)</dt>{' '}
           <dd className="inline">meets the strictest level: at least 7 for words.</dd>
-        </div>
-        <div>
-          <dt className="inline font-medium text-ink-muted">Wrench</dt>{' '}
-          <dd className="inline">means we changed that shade for you.</dd>
         </div>
       </dl>
     </div>

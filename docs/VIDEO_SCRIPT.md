@@ -45,7 +45,7 @@ These are the fine-tune sliders: colour strength (saturation), brightness and co
 
 **Accessibility auto-fix**
 [Open the "Easy to read" section; drag Contrast to 0]
-Here's the part I'm proudest of. I just crushed the contrast, but the chip on the "Easy to read" section still says every text is readable. That's because auto-fix nudges the lightness of any failing colour until it meets WCAG AA, keeping its hue and chroma. [Turn auto-fix off] If I switch it off, you can see the real failures in red. [Turn it back on] The wrench icons show which pairs were adjusted.
+Here's the part I'm proudest of. I just crushed the contrast, but the chip on the "Easy to read" section still says every text is readable. That's because auto-fix nudges the lightness of any failing colour until it meets WCAG AA, keeping its hue and chroma. [Turn auto-fix off] If I switch it off, you can see the real failures in red. [Turn it back on] The "Adjusted" tags show which pairs were changed.
 
 **Mobile**
 [DevTools device mode at 390px, or a phone]
