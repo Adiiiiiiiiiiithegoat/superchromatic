@@ -273,7 +273,11 @@ function ImageInspector({ src, name, scanning }: { src: string; name: string; sc
       )}
 
       {hover && (
-        <div aria-hidden className="pointer-events-none absolute flex flex-col items-center" style={{ left: hover.x - LOUPE / 2, top: hover.y - LOUPE - 18 }}>
+        <div aria-hidden className="pointer-events-none absolute flex -translate-y-full flex-col items-center" style={{ left: hover.x - LOUPE / 2, top: hover.y - 12 }}>
+          <span className="mb-1 flex items-center gap-1 rounded bg-black/75 px-1.5 py-0.5 font-mono text-[11px] text-white">
+            <Pipette className="size-3" />
+            {hover.hex}
+          </span>
           <div
             className="relative rounded-full border-2 border-white shadow-lg"
             style={{
@@ -288,10 +292,6 @@ function ImageInspector({ src, name, scanning }: { src: string; name: string; sc
           >
             <span className="absolute top-1/2 left-1/2 size-3 -translate-1/2 border border-white shadow-[0_0_0_1px_#000]" />
           </div>
-          <span className="mt-1 flex items-center gap-1 rounded bg-black/75 px-1.5 py-0.5 font-mono text-[11px] text-white">
-            <Pipette className="size-3" />
-            {hover.hex}
-          </span>
         </div>
       )}
     </div>
