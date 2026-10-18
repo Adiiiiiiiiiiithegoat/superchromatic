@@ -36,7 +36,7 @@ function PresetThumb({ vars, wallpaper, glass }: { vars: Record<string, string>;
 
 export function PresetSection() {
   const { colors } = useRoles()
-  const mode = useThemeStore((s) => s.mode)
+  const mode = useThemeStore((s) => s.userMode)
   const a11y = useThemeStore((s) => s.a11y)
   const presetId = useThemeStore((s) => s.presetId)
   const setPreset = useThemeStore((s) => s.setPreset)

@@ -235,3 +235,15 @@ test('eyedropper loupe stays fully on screen at the picture edges', async ({ pag
   await page.mouse.move(b.x + 3, b.y + 3)
   await page.screenshot({ path: 'test-results/loupe-edge.png' })
 })
+
+test('Pastel goes light without flipping the other style tiles, and leaving it restores dark', async ({ page }) => {
+  await ready(page)
+  const scheme = () => page.getByTestId('preview-root').evaluate((el) => (el as HTMLElement).style.colorScheme)
+  const minimalTile = () => page.getByTestId('preset-minimal').locator('div[aria-hidden]').first().getAttribute('style')
+  const before = await minimalTile()
+  await page.getByTestId('preset-pastel').click()
+  await expect.poll(scheme).toBe('light')
+  expect(await minimalTile()).toBe(before)
+  await page.getByTestId('preset-minimal').click()
+  await expect.poll(scheme).toBe('dark')
+})

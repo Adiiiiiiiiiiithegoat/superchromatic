@@ -39,6 +39,8 @@ interface ThemeState {
   presetId: PresetId
   adjustments: Adjustments
   mode: Mode
+  /** The mode the user chose; Neon/Pastel override `mode` while active, other styles return to this. */
+  userMode: Mode
   a11y: A11yOptions
   hintDismissed: boolean
   toast: { id: number; message: string } | null
@@ -97,6 +99,7 @@ export const useThemeStore = create<ThemeState>()(
       presetId: 'minimal',
       adjustments: PRESETS_BY_ID.minimal.defaults,
       mode: 'dark',
+      userMode: 'dark',
       a11y: { autoFix: true },
       hintDismissed: false,
       toast: null,
@@ -225,11 +228,11 @@ export const useThemeStore = create<ThemeState>()(
 
       setPreset(id) {
         const preset = PRESETS_BY_ID[id]
-        set({ presetId: id, adjustments: preset.defaults, mode: preset.preferredMode ?? get().mode })
+        set({ presetId: id, adjustments: preset.defaults, mode: preset.preferredMode ?? get().userMode })
       },
 
       setAdjustment: (key, value) => set({ adjustments: { ...get().adjustments, [key]: value } }),
-      setMode: (mode) => set({ mode }),
+      setMode: (mode) => set({ mode, userMode: mode }),
       setAutoFix: (autoFix) => set({ a11y: { autoFix } }),
 
       applyShare(s) {
@@ -246,8 +249,14 @@ export const useThemeStore = create<ThemeState>()(
     {
       name: 'superchromatic:v1',
       // v1: dark became the default; existing sessions switch to it once, then the toggle is remembered again.
-      version: 1,
-      migrate: (saved, version) => (version < 1 ? { ...(saved as object), mode: 'dark' } : saved) as ThemeState,
+      // v2: userMode split from mode; seed it from the saved mode.
+      version: 2,
+      migrate: (saved, version) => {
+        const s = { ...(saved as ThemeState) }
+        if (version < 1) s.mode = 'dark'
+        if (version < 2) s.userMode = s.mode
+        return s
+      },
       storage: createJSONStorage(() => safeStorage),
       // An upload's blob: URL dies with the tab; its bytes live in IndexedDB and get a fresh URL on load.
       partialize: (s) => ({
@@ -260,6 +269,7 @@ export const useThemeStore = create<ThemeState>()(
         presetId: s.presetId,
         adjustments: s.adjustments,
         mode: s.mode,
+        userMode: s.userMode,
         a11y: s.a11y,
         hintDismissed: s.hintDismissed,
       }),
